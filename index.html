@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation stats</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <section id="data" class="container">
+            <form class="form-row"><h2>Filter</h2> 
+                  <div class="form-group col-md-6">
+                    <label for="wiki">Wiki</label>
+                    <input type="text" class="form-control"
+                    name="wiki" placeholder="meta.wikimedia.org">
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="wiki">Page</label>
+                    <input type="text" class="form-control" 
+                    name="page" placeholder="Full namespace">
+                  </div>
+            </form>
+        
+        
+        <h2>Results (<span id="total">0</span>)
+            <button type="button" class="btn btn-primary" id="start">Start</button> <button type="button" class="btn btn-warning" id="stop">Stop</button>
+        </h2> 
+        
+        <table id="results-table" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Home</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </section>
+</body>
+
+</html>
+<script src="history.js" ></script>
+<script src="script.js" ></script>
+<script>
+    let stop = document.querySelectorAll("#stop")[0]
+    let running = false
+    stop.style.display = "none"
+    stop.addEventListener("click", (e)=> {
+        running = false;
+    })
+
+    // Run the show
+    let start = document.querySelectorAll("#start")[0]
+    start.addEventListener("click", (e)=> {
+        running = true;
+        stop.style.display = "inline-block"
+        collectAllData();
+    })
+
+    
+</script>
