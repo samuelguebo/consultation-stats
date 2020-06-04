@@ -2,5 +2,5 @@
 A minimalist utility gathering stats details about edits who participated in a Mediawiki-powered discussion.
 
 
-#* Contributors
+## Contributors
  * Samuel Guebo ([@samuelguebo](https://github.com/samuelguebo))
