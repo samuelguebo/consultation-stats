@@ -4,7 +4,7 @@ const Stats  = {
     
     // Stats data
     list = this.percentile(list)
-    console.log(list)
+    //console.log(list)
     let data = {
       datasets: [{
         data: Object.values(list),

@@ -27,7 +27,7 @@ const collectAllData = () => {
                             // TODO: use updateChart for better performance
                             Stats.displayChart(list.homewikis)
                         }                    
-                    }).catch(error => console.log(error))
+                    }).catch(error => console.log(`error: ${error}`))
             });
             
         })
