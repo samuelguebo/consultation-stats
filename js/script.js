@@ -19,7 +19,7 @@ const collectAllData = () => {
             users.forEach(item => {
                 History.getUserDetails(item)
                     .then(user => {
-                        if(list.usernames.indexOf(user.username) < 1) {
+                        if(list.usernames.indexOf(user.username) < 0) {
                             updateUI(user)
                             list.usernames.push(user.username)
                             list.homewikis.push(user.home)

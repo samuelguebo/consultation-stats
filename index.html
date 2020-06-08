@@ -7,11 +7,24 @@
 	<title>Consultation stats</title>
 	<link rel="stylesheet" href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
 	 integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-	<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-
+  <!-- inline css -->
+  <style>
+    h1{
+      text-align: center;
+    }
+    button#stop {
+      display: none;
+    }
+    canvas{
+      max-width: 800px;
+      height: auto;
+      max-height: 200px;
+      margin: 0 auto;
+    }
+  </style>
 	<section id="data" class="container">
 		<h1>Consultation stats</h1>
 		<canvas id="resultChart" height="0" width="0"></canvas>
@@ -64,10 +77,10 @@
 			</div>
 		</div>
 	</footer>
+  <script src="js/history.js" ></script>
+  <script src="js/script.js" ></script>
+  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js" ></script>
+  <script src="js/stats.js" ></script> 
 </body>
 
 </html>
-<script src="js/history.js" ></script>
-<script src="js/script.js" ></script>
-<script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js" ></script>
-<script src="js/stats.js" ></script> 

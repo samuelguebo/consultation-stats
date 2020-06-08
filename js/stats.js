@@ -49,6 +49,7 @@ const Stats  = {
     }
     // update
     else{
+
       resultChart.data.labels = Object.keys(list)
       resultChart.data.datasets[0].data = Object.values(list)
       
