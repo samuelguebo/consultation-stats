@@ -41,7 +41,7 @@ const Stats  = {
           },
           legend: {
               display: true,
-              position: 'left',
+              position: 'right',
           }
         }
       });
