@@ -5,7 +5,9 @@ button#stop {
   display: none;
 }
 canvas{
+  margin-top: 20px;
   max-width: auto;
   max-height: 250px;
   margin: 0 auto;
+  margin-bottom: 20px;
 }
