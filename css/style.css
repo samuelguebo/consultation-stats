@@ -5,7 +5,7 @@ h1{
   display: none;
 }
 canvas{
-  max-width: 650px;
+  max-width: 750px;
   height: auto;
   max-height: 250px;
   margin: 0 auto;
