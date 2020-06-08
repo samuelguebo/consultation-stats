@@ -7,24 +7,24 @@
 	<title>Consultation stats</title>
 	<link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
 	 integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-
+	<link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
-  
+
 	<section id="data" class="container">
 		<h1>Consultation stats</h1>
-        <canvas id="resultChart" height="0" width="0"></canvas>
+		<canvas id="resultChart" height="0" width="0"></canvas>
 		<form class="form-row">
 			<div class="form-group col-md-6">
 				<label for="wiki">Wiki</label>
                     <input type="text" class="form-control"
-                    name="wiki" placeholder="meta.wikimedia.org">
+                    name="wiki" placeholder="meta.wikimedia.org" value="meta.wikimedia.org">
                   </div>
                   <div class="form-group col-md-6">
                     <label for="wiki">Page</label>
                     <input type="text" class="form-control" 
-                    name="page" placeholder="Full namespace">
+                    name="page" placeholder="Full namespace" value="Talk:IP Editing: Privacy Enhancement and Abuse Mitigation">
                   </div>
             </form>
         
@@ -63,30 +63,11 @@
 				</div>
 			</div>
 		</div>
-		<script src="/tsbot/static/js/main.js"></script>
 	</footer>
 </body>
 
 </html>
-<script src="history.js" ></script>
-<script src="script.js" ></script>
+<script src="js/history.js" ></script>
+<script src="js/script.js" ></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js" ></script>
-<!--<script src="stats.js" ></script> -->
-
-<script>
-    let stop = document.querySelectorAll("#stop")[0]
-    let running = false
-    stop.style.display = "none"
-    stop.addEventListener("click", (e)=> {
-        running = false;
-    })
-
-    // Run the show
-    let start = document.querySelectorAll("#start")[0]
-    start.addEventListener("click", (e)=> {
-        running = true;
-        stop.style.display = "inline-block"
-        collectAllData();
-    })
-    
-</script>
+<script src="js/stats.js" ></script> 

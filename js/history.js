@@ -70,7 +70,7 @@ const History = {
         return fetch(query_url)
             .then(res => res.json())
             .then(data => {
-                console.log(JSON.stringify(data))
+                //console.log(JSON.stringify(data))
                 user['registration'] = data.query.globaluserinfo.registration
                 user['home'] = data.query.globaluserinfo.home
                 return user

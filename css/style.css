@@ -1,0 +1,12 @@
+h1{
+  text-align: center;
+}
+#stop {
+  display: none;
+}
+canvas{
+  max-width: 650px;
+  height: auto;
+  max-height: 250px;
+  margin: 0 auto;
+}

@@ -1,22 +1,35 @@
 /**
+ * Global variables
+ * 
+ */
+let resultChart;
+/**
  * Chain previous methods together
  * and collect the data we need
  */
 const collectAllData = () => {
-    let usernames = []
+    let list = {
+      usernames: [],
+      homewikis: []
+    }
     History.getUsers()
         .then(users => {
+            // display stats chart with empty data
+            Stats.displayChart([])
             users.forEach(item => {
                 History.getUserDetails(item)
                     .then(user => {
-                        if(usernames.indexOf(user.username) < 1) {
+                        if(list.usernames.indexOf(user.username) < 1) {
                             updateUI(user)
-                            usernames.push(user.username)
-                        }
-                    })
+                            list.usernames.push(user.username)
+                            list.homewikis.push(user.home)
 
+                            // TODO: use updateChart for better performance
+                            Stats.displayChart(list.homewikis)
+                        }                    
+                    }).catch(error => console.log(error))
             });
-
+            
         })
 }
 
@@ -45,3 +58,21 @@ const addRowToTable = (item) => {
     row.innerHTML = rowHTML
     table.append(row)
 }
+
+/**
+ * Start and stop animation
+ */
+const init = () => {
+    let stop = document.querySelectorAll("#stop")[0]
+    let running = false
+
+    // Run the show
+    let start = document.querySelectorAll("#start")[0]
+    start.addEventListener("click", (e)=> {
+        running = true;
+        //stop.style.display = "inline-block"
+        collectAllData();
+    })
+}
+
+init();
