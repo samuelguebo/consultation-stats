@@ -1,7 +1,7 @@
 h1{
   text-align: center;
 }
-#stop {
+button#stop {
   display: none;
 }
 canvas{
