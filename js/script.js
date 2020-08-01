@@ -78,9 +78,13 @@ const init = () => {
     let wiki = document.querySelector('input[name=wiki]')
     let page = document.querySelector('input[name=page]')
 
-    wiki.addEventListener('keyup', e => {
-        AutoComplete.wikis().then(wikis => console.log(wikis))
+    AutoComplete.wikis().then(wikis => {
+        $( 'input[name=wiki]' ).autocomplete({
+            source: wikis
+        });
     })
+    
+        
 }
 
 init();
