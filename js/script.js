@@ -73,6 +73,14 @@ const init = () => {
         //stop.style.display = "inline-block"
         collectAllData();
     })
+
+    // autocomplete for wikis
+    let wiki = document.querySelector('input[name=wiki]')
+    let page = document.querySelector('input[name=page]')
+
+    wiki.addEventListener('keyup', e => {
+        AutoComplete.wikis().then(wikis => console.log(wikis))
+    })
 }
 
 init();
