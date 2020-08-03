@@ -5,9 +5,18 @@ button#stop {
   display: none;
 }
 canvas{
-  margin-top: 20px;
-  max-width: auto;
-  max-height: 250px;
+  max-width: 800px;
+  height: auto;
+  max-height: 200px;
   margin: 0 auto;
   margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+ol, ul{ 
+  padding-left: 0px;
+} 
+
+#data form li {
+  margin: -2px 0px 0px 0px;
 }
