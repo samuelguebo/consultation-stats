@@ -78,13 +78,63 @@ const init = () => {
     let wiki = document.querySelector('input[name=wiki]')
     let page = document.querySelector('input[name=page]')
 
-    AutoComplete.wikis().then(wikis => {
+    /*
+    WikiRepository.getWikis().then(wikis => {
         $( 'input[name=wiki]' ).autocomplete({
             source: wikis
         });
     })
-    
+    */
+   wikiAutoComplete();
         
+}
+
+/**
+ * Attach auto-complete to "wiki" input field
+ */
+const wikiAutoComplete = () => {
+    let inputContainer = "input[name=wiki]";
+    let resultContainerID = "wiki_results";
+    let data = WikiRepository.getWikis();
+    attachAutoComplete(inputContainer, resultContainerID, data);    
+}
+
+/**
+ * Helper method for attaching the autocomplete
+ * interactions to an input
+ */
+const attachAutoComplete = (inputContainer, resultContainerID, data) => {
+    new autoComplete({
+        data: {                              // Data src [Array, Function, Async] | (REQUIRED)
+          src: data,
+          cache: false
+        },
+        selector: inputContainer,           // Input field selector              | (Optional)
+        debounce: 300,                       // Post duration for engine to start | (Optional)
+        resultsList: {                       // Rendered results list object      | (Optional)
+            render: true,
+            /* if set to false, add an eventListener to the selector for event type
+               "autoComplete" to handle the result */
+            container: source => {
+                source.setAttribute("id", resultContainerID);
+            },
+            destination: document.querySelector(inputContainer),
+            position: "afterend",
+            element: "ul"
+        },
+        maxResults: 5,
+        highlight: true,
+        noResults: () => {                     // Action script on noResults      | (Optional)
+            const result = document.createElement("li");
+            result.setAttribute("class", "no_result autoComplete_result");
+            result.setAttribute("tabindex", "1");
+            result.innerHTML = "No Results";
+            document.querySelector(inputContainer).parentElement.getElementById(resultContainerID).appendChild(result);
+        },
+        onSelection: item => {             // Action script onSelection event | (Optional)
+            document.querySelector(inputContainer).value = item.results[0];
+        }
+    });
 }
 
 init();
