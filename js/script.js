@@ -12,12 +12,12 @@ const collectAllData = () => {
       usernames: [],
       homewikis: []
     }
-    History.getUsers()
+    WikiRepository.getUsers()
         .then(users => {
             // display stats chart with empty data
             Stats.displayChart([])
             users.forEach(item => {
-                History.getUserDetails(item)
+                WikiRepository.getUserDetails(item)
                     .then(user => {
                         if(list.usernames.indexOf(user.username) < 0) {
                             updateUI(user)
@@ -74,18 +74,8 @@ const init = () => {
         collectAllData();
     })
 
-    // autocomplete for wikis
-    let wiki = document.querySelector('input[name=wiki]')
-    let page = document.querySelector('input[name=page]')
-
-    /*
-    WikiRepository.getWikis().then(wikis => {
-        $( 'input[name=wiki]' ).autocomplete({
-            source: wikis
-        });
-    })
-    */
    wikiAutoComplete();
+   pageAutoComplete();
         
 }
 
@@ -96,7 +86,21 @@ const wikiAutoComplete = () => {
     let inputContainer = "input[name=wiki]";
     let resultContainerID = "wiki_results";
     let data = WikiRepository.getWikis();
-    attachAutoComplete(inputContainer, resultContainerID, data);    
+    attachAutoComplete(inputContainer, resultContainerID, data);
+}
+
+/**
+ * Attach auto-complete to "page" input field
+ */
+const pageAutoComplete = () => {
+    let pageInputContainer = "input[name=page]";
+    let wikiInputContainer = "input[name=wiki]";
+    let resultContainerID = "page_results";
+    let inputContainer = pageInputContainer;
+
+    let data = async () => WikiRepository.getPages(pageInputContainer, wikiInputContainer)
+    attachAutoComplete(pageInputContainer, resultContainerID, data);
+
 }
 
 /**
@@ -106,7 +110,7 @@ const wikiAutoComplete = () => {
 const attachAutoComplete = (inputContainer, resultContainerID, data) => {
     new autoComplete({
         data: {                              // Data src [Array, Function, Async] | (REQUIRED)
-          src: data,
+          src: data ,
           cache: false
         },
         selector: inputContainer,           // Input field selector              | (Optional)
@@ -129,7 +133,7 @@ const attachAutoComplete = (inputContainer, resultContainerID, data) => {
             result.setAttribute("class", "no_result autoComplete_result");
             result.setAttribute("tabindex", "1");
             result.innerHTML = "No Results";
-            document.querySelector(inputContainer).parentElement.getElementById(resultContainerID).appendChild(result);
+            document.querySelector(inputContainer).parentElement.querySelector(`#${resultContainerID}`).appendChild(result);
         },
         onSelection: item => {             // Action script onSelection event | (Optional)
             document.querySelector(inputContainer).value = item.results[0];
