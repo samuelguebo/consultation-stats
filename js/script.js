@@ -96,11 +96,8 @@ const pageAutoComplete = () => {
     let pageInputContainer = "input[name=page]";
     let wikiInputContainer = "input[name=wiki]";
     let resultContainerID = "page_results";
-    let inputContainer = pageInputContainer;
-
     let data = async () => WikiRepository.getPages(pageInputContainer, wikiInputContainer)
     attachAutoComplete(pageInputContainer, resultContainerID, data);
-
 }
 
 /**
@@ -114,7 +111,7 @@ const attachAutoComplete = (inputContainer, resultContainerID, data) => {
           cache: false
         },
         selector: inputContainer,           // Input field selector              | (Optional)
-        debounce: 300,                       // Post duration for engine to start | (Optional)
+        debounce: 250,                       // Post duration for engine to start | (Optional)
         resultsList: {                       // Rendered results list object      | (Optional)
             render: true,
             /* if set to false, add an eventListener to the selector for event type
