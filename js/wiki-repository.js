@@ -165,5 +165,32 @@ const WikiRepository = {
             })
 
         return source
+    },
+
+    /**
+     * Indicate whether user account was blocked
+     * over a certain recent period
+     */
+    getRecentBlocks = async () => {
+        // TODO: use api
+        // https://fr.wikipedia.org/w/api.php?action=query&list=blocks&bkusers=Jim167&format=json
+
+
+    },
+
+    /**
+     * List the number of edits performed by a user
+     * over a certain recent period
+     */
+    getRecentEditCount = async () => {
+        /**
+         * TODO: use api
+         * https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&uclimit=500&ucend=2020-08-04T00:00:00Z&ucuser=Lomita&format=json
+         * 
+         * Check whether there is a "continue" key in result.
+         * If yes, return "+500 edits", else: return the edit count
+         **/
+
+
     }
 }
