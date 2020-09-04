@@ -85,8 +85,6 @@ const WikiRepository = {
                 return users
 
             })
-        }else{
-            alert('Empty fields')
         }
 
     },

@@ -3,34 +3,54 @@
  * 
  */
 let resultChart;
+
 /**
  * Chain previous methods together
  * and collect the data we need
  */
 const collectAllData = () => {
     let list = {
-      usernames: [],
-      homewikis: []
+        usernames: [],
+        homewikis: []
     }
-    WikiRepository.getUsers()
-        .then(users => {
-            // display stats chart with empty data
-            Stats.displayChart([])
-            users.forEach(item => {
-                WikiRepository.getUserDetails(item)
-                    .then(user => {
-                        if(list.usernames.indexOf(user.username) < 0) {
-                            updateUI(user)
-                            list.usernames.push(user.username)
-                            list.homewikis.push(user.home)
+    // Variables
+    let wiki = document.querySelector('input[name=wiki]').value
+    let page = document.querySelector('input[name=page]').value
 
-                            // TODO: use updateChart for better performance
-                            Stats.displayChart(list.homewikis)
-                        }                    
-                    }).catch(error => console.log(`error: ${error}`))
-            });
-            
-        })
+    if (wiki !== "" && page !== "") {
+        WikiRepository.getUsers()
+            .then(users => {
+                // display stats chart with empty data
+                Stats.displayChart([])
+                users.forEach(item => {
+                    WikiRepository.getUserDetails(item)
+                        .then(user => {
+                            if (list.usernames.indexOf(user.username) < 0) {
+                                updateUI(user)
+                                list.usernames.push(user.username)
+                                list.homewikis.push(user.home)
+
+                                // TODO: use updateChart for better performance
+                                Stats.displayChart(list.homewikis)
+                            }
+                        }).catch(error => console.log(`error: ${error}`))
+                });
+
+            })
+    } else {
+        alert('Empty fields')
+    }
+}
+
+/**
+ * Remove all rows from table
+ */
+const clearAllData = () => {
+    let table = document.getElementById("results-table").querySelector("tbody")
+    table.innerHTML = ""
+    let counter = document.querySelectorAll("#data h2 span#total")[0]
+    counter.innerText = "0"
+
 }
 
 /**
@@ -68,15 +88,16 @@ const init = () => {
 
     // Run the show
     let start = document.querySelectorAll("#start")[0]
-    start.addEventListener("click", (e)=> {
+    start.addEventListener("click", (e) => {
         running = true;
         //stop.style.display = "inline-block"
+        clearAllData();
         collectAllData();
     })
 
-   wikiAutoComplete();
-   pageAutoComplete();
-        
+    wikiAutoComplete();
+    pageAutoComplete();
+
 }
 
 /**
@@ -106,13 +127,13 @@ const pageAutoComplete = () => {
  */
 const attachAutoComplete = (inputContainer, resultContainerID, data) => {
     new autoComplete({
-        data: {                              // Data src [Array, Function, Async] | (REQUIRED)
-          src: data ,
-          cache: false
+        data: { // Data src [Array, Function, Async] | (REQUIRED)
+            src: data,
+            cache: false
         },
-        selector: inputContainer,           // Input field selector              | (Optional)
-        debounce: 250,                       // Post duration for engine to start | (Optional)
-        resultsList: {                       // Rendered results list object      | (Optional)
+        selector: inputContainer, // Input field selector              | (Optional)
+        debounce: 250, // Post duration for engine to start | (Optional)
+        resultsList: { // Rendered results list object      | (Optional)
             render: true,
             /* if set to false, add an eventListener to the selector for event type
                "autoComplete" to handle the result */
@@ -125,14 +146,14 @@ const attachAutoComplete = (inputContainer, resultContainerID, data) => {
         },
         maxResults: 5,
         highlight: true,
-        noResults: () => {                     // Action script on noResults      | (Optional)
+        noResults: () => { // Action script on noResults      | (Optional)
             const result = document.createElement("li");
             result.setAttribute("class", "no_result autoComplete_result");
             result.setAttribute("tabindex", "1");
             result.innerHTML = "No Results";
             document.querySelector(inputContainer).parentElement.querySelector(`#${resultContainerID}`).appendChild(result);
         },
-        onSelection: item => {             // Action script onSelection event | (Optional)
+        onSelection: item => { // Action script onSelection event | (Optional)
             document.querySelector(inputContainer).value = item.selection.value;
         }
     });
