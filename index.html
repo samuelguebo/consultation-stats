@@ -2,99 +2,123 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Consultation stats</title>
-	<link rel="stylesheet" href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
-   integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-   <!-- auto complete -->
-   <link rel="stylesheet" href="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.min.css">
-   <!-- inline css -->
-   <style>
-    h1{
-      text-align: center;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consultation stats</title>
+  <link rel="stylesheet" href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
+    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <!-- auto complete -->
+  <link rel="stylesheet"
+    href="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.min.css">
+  <!-- Fontawesome -->
+  <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css
+  ">
+  <!-- inline css -->
+  <style>
+    a {
+      color: #ff7a7a;
     }
+
     button#stop {
       display: none;
     }
-    canvas{
-      max-width: 800px;
+
+    canvas {
+      max-width: 100%;
       height: auto;
       max-height: 200px;
-      margin: 0 auto;
+      /* margin: 0 auto; */
       margin-bottom: 20px;
       margin-top: 20px;
     }
 
-    ol, ul{ 
+    ol,
+    ul {
       padding-left: 0px;
-    } 
+    }
 
     #data form li {
       margin: -2px 0px 0px 0px;
     }
-   </style>
+
+    .container form.form-row .form-group {
+      padding-left: 0;
+    }
+
+    .navbar-light {
+      background-color: #ffe0cf;
+      margin-bottom: 0px;
+      padding: 40px 10px;
+    }
+  </style>
 </head>
 
 <body>
+  <nav class="navbar navbar-light">
+    <div class="container">
+      <h1 class="display-5">Consultation statistics</h1>
+      <p class="lead">Analyzing quickly how diverse a wiki conversation is.</p>
+    </div>
+  </nav>
+  <section id="data" class="container">
+    <canvas id="resultChart" height="0" width="0"></canvas>
+    <form class="form-row">
+      <div class="form-group col-md-6">
+        <label for="wiki">Wiki</label>
+        <input type="text" class="form-control" name="wiki" placeholder="meta.wikimedia.org">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="wiki">Page</label>
+        <input type="text" class="form-control" name="page" placeholder="Full namespace">
+      </div>
+    </form>
 
-	<section id="data" class="container">
-		<h1>Consultation stats</h1>
-		<canvas id="resultChart" height="0" width="0"></canvas>
-		<form class="form-row">
-			<div class="form-group col-md-6">
-				<label for="wiki">Wiki</label>
-                    <input type="text" class="form-control"
-                    name="wiki" placeholder="meta.wikimedia.org">
-                  </div>
-                  <div class="form-group col-md-6">
-                    <label for="wiki">Page</label>
-                    <input type="text" class="form-control" 
-                    name="page" placeholder="Full namespace">
-                  </div>
-            </form>
-        
-        
-        <h2>Results (<span id="total">0</span>)
-            <button type="button" class="btn btn-primary" id="start">Start</button> <button type="button" class="btn btn-warning" id="stop">Stop</button>
-        </h2> 
-        
-        <table id="results-table" class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Home</th>
-                </tr>
-            </thead>
-            <tbody>
 
-            </tbody>
-        </table>
-        
-    </section>
-    <footer class="container footer">
-		<hr class="featurette-divider">
-		<div id="footer">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-6">
-					<a href="https://wikimediafoundation.org/wiki/Privacy_policy">Privacy Policy</a> |
-					<a href="https://wikitech.wikimedia.org/wiki/Wikitech:Labs_Terms_of_use">Terms of Use</a> |
-					<a href="https://phabricator.wikimedia.org/maniphest/task/create/?projects=trust-and-safety">Report a bug!</a>
-					</div>
-					<div class="pull-right">
-						Hosted on <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia Cloud VPS</a> and written by <a href="https://meta.wikimedia.org/wiki/Samuel_(WMF)">Samuel (WMF)</a> | <a href="http://github.com/samuelguebo/consultation-stats">Source code </a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</footer>
-  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js" ></script>
-  <script src="js/wiki-repository.js" ></script>
-  <script src="js/script.js" ></script>
-  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js" ></script>
-  <script src="js/stats.js" ></script> 
+    <h2>Results (<span id="total">0</span>)
+      <button type="button" class="btn btn-primary" id="start">Start</button> <button type="button"
+        class="btn btn-warning" id="stop">Stop</button>
+    </h2>
+
+    <table id="results-table" class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Home</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+
+  </section>
+  <footer class="container footer">
+    <hr class="featurette-divider">
+    <div id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <a href="https://wikimediafoundation.org/wiki/Privacy_policy">Privacy Policy</a> |
+            <a href="https://wikitech.wikimedia.org/wiki/Wikitech:Labs_Terms_of_use">Terms of Use</a> |
+            <a href="https://phabricator.wikimedia.org/maniphest/task/create/?projects=trust-and-safety">Report a
+              bug!</a>
+          </div>
+          <div class="pull-right">
+            Hosted on <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia Cloud VPS</a> and written
+            by <a href="https://meta.wikimedia.org/wiki/Samuel_(WMF)">Samuel (WMF)</a> | <a
+              href="http://github.com/samuelguebo/consultation-stats">Source code </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js">
+  </script>
+  <script src="js/wiki-repository.js"></script>
+  <script src="js/script.js"></script>
+  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+  <script src="js/stats.js"></script>
 </body>
 
 </html>
