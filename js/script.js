@@ -70,7 +70,7 @@ const updateUI = (user) => {
 const addRowToTable = (item) => {
     // build HTML rows
     let table = document.getElementById("results-table").querySelector("tbody")
-    let count = table.childNodes.length
+    let count = table.childNodes.length + 1
     let row = document.createElement("tr")
     let rowHTML = "<td>" + (count++) + "</td>"
     rowHTML += "<td>" + item.username + "</td>"
