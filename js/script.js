@@ -133,7 +133,7 @@ const attachAutoComplete = (inputContainer, resultContainerID, data) => {
             document.querySelector(inputContainer).parentElement.querySelector(`#${resultContainerID}`).appendChild(result);
         },
         onSelection: item => {             // Action script onSelection event | (Optional)
-            document.querySelector(inputContainer).value = item.results[0];
+            document.querySelector(inputContainer).value = item.selection.value;
         }
     });
 }
