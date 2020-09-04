@@ -171,7 +171,7 @@ const WikiRepository = {
      * Indicate whether user account was blocked
      * over a certain recent period
      */
-    getRecentBlocks = async () => {
+    getRecentBlocks: async () => {
         // TODO: use api
         // https://fr.wikipedia.org/w/api.php?action=query&list=blocks&bkusers=Jim167&format=json
 
@@ -182,7 +182,7 @@ const WikiRepository = {
      * List the number of edits performed by a user
      * over a certain recent period
      */
-    getRecentEditCount = async () => {
+    getRecentEditCount: async () => {
         /**
          * TODO: use api
          * https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&uclimit=500&ucend=2020-08-04T00:00:00Z&ucuser=Lomita&format=json
