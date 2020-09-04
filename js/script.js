@@ -30,7 +30,6 @@ const collectAllData = () => {
                                 list.usernames.push(user.username)
                                 list.homewikis.push(user.home)
 
-                                // TODO: use updateChart for better performance
                                 Stats.displayChart(list.homewikis)
                             }
                         }).catch(error => console.log(`error: ${error}`))
@@ -72,9 +71,12 @@ const addRowToTable = (item) => {
     let table = document.getElementById("results-table").querySelector("tbody")
     let count = table.childNodes.length + 1
     let row = document.createElement("tr")
+    //let duration = getDuration(new Date(item.registration), new Date())
+    let duration = new Date(item.registration).getFullYear()
     let rowHTML = "<td>" + (count++) + "</td>"
     rowHTML += "<td>" + item.username + "</td>"
     rowHTML += "<td>" + item.home + "</td>"
+    rowHTML += "<td>" + duration + "</td>"
     row.innerHTML = rowHTML
     table.append(row)
 }
@@ -159,4 +161,56 @@ const attachAutoComplete = (inputContainer, resultContainerID, data) => {
     });
 }
 
+/**
+ * Indicate elapsted time between two dates
+ * @param {Date} aDate  oldest date 
+ * @param {Date} bDate  most recent date 
+ * 
+ * @return an object containing details on elapsed time
+ */
+const getDuration = (aDate, bDate) => {
+
+    let delta = bDate.getTime() - aDate.getTime()
+    delta = delta / 1000
+    // calculate (and subtract) whole days
+    var days = Math.floor(delta / 86400);
+    delta -= days * 86400;
+
+    var totalminutes = 0;
+    if (days > 0) {
+        totalminutes += 24 * 60 * days
+    }
+
+    // calculate (and subtract) whole hours
+    var hours = Math.floor(delta / 3600) % 24;
+    delta -= hours * 3600;
+
+    if (hours > 0) {
+        totalminutes += 60 * hours
+    }
+
+    // calculate (and subtract) whole minutes
+    var minutes = Math.ceil(delta / 60) % 60;
+    delta -= minutes * 60;
+
+    if (minutes > 0) {
+        totalminutes += minutes
+    }
+
+    // what's left is seconds
+    var seconds = delta % 60; // in theory the modulus is not required
+
+    // total hours, for 48-hour KPI purpose
+    var totalhours = (days * 24) + (hours) + (minutes / 60);
+
+    return {
+        'days': days,
+        'hours': hours,
+        'minutes': minutes,
+        'seconds': seconds,
+        'totalhours': totalhours,
+        'totalminutes': totalminutes
+    }
+
+}
 init();
