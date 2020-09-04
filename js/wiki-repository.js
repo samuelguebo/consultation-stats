@@ -1,34 +1,35 @@
 const WikiRepository = {
+
     /**
      * Collect list of all wikis obtained
      * through Special:SiteMatrix
      */
     getWikis: () => {
-        if ( typeof(window.wikis) === "undefined" ){
-        
+        if (typeof (window.wikis) === "undefined") {
+
             let apiURI = 'https://meta.wikimedia.org/w/api.php?action=sitematrix&smlangprop=site&smsiteprop=url&format=json&origin=*'
 
             return fetch(apiURI)
-            .then(response => response.json())
-            .then(data => {
-                
-                // flatten arrays
-                let specials = data.sitematrix.specials
-                specials = specials.map(a => a.url.replace('https://',''))
-                
-                // remove key 'count' and 'specials'
-                delete data.sitematrix.count
-                delete data.sitematrix.specials
-                
-                data = Object.values(data.sitematrix)
-                
-                data = data.reduce((a, b) => a.concat(b.site), []);
-                data = data.map((wiki) => wiki.url.replace('https://',''))
-                window.wikis = data.concat(specials)
-                return window.wikis
-            })
+                .then(response => response.json())
+                .then(data => {
 
-        }else {
+                    // flatten arrays
+                    let specials = data.sitematrix.specials
+                    specials = specials.map(a => a.url.replace('https://', ''))
+
+                    // remove key 'count' and 'specials'
+                    delete data.sitematrix.count
+                    delete data.sitematrix.specials
+
+                    data = Object.values(data.sitematrix)
+
+                    data = data.reduce((a, b) => a.concat(b.site), []);
+                    data = data.map((wiki) => wiki.url.replace('https://', ''))
+                    window.wikis = data.concat(specials)
+                    return window.wikis
+                })
+
+        } else {
             return Promise.resolve(window.wikis)
         }
     },
@@ -36,7 +37,7 @@ const WikiRepository = {
      * Extract users details
      * from JSON
      */
-    getUsers : () => {
+    getUsers: () => {
 
         // Variables
         let wiki = document.querySelector('input[name=wiki]').value
@@ -45,8 +46,8 @@ const WikiRepository = {
         //let from = new Date(document.getElementById('from').value())
         //let until = new Date(document.getElementById('until').value())
         let limit = 500
-        
-        
+
+
 
 
         page = encodeURIComponent(page)
@@ -65,26 +66,26 @@ const WikiRepository = {
         query_url += "&format=json&rvlimit=" + limit + "&origin=*"
 
         if (wiki !== "" && page !== "") {
-        return fetch(query_url)
-            .then(res => res.json())
-            .then(data => {
-                let users = []
-                let results = data.query.pages[0].revisions
-                let page = data.query.pages[0].title
+            return fetch(query_url)
+                .then(res => res.json())
+                .then(data => {
+                    let users = []
+                    let results = data.query.pages[0].revisions
+                    let page = data.query.pages[0].title
 
-                for (let user of results) {
-                    // keep only sock masters
-                    users.push({
-                        timestamp: user['timestamp'],
-                        username: user['user'],
-                        revid: user['revid'],
-                        page: page
-                    })
-                }
+                    for (let user of results) {
+                        // keep only sock masters
+                        users.push({
+                            timestamp: user['timestamp'],
+                            username: user['user'],
+                            revid: user['revid'],
+                            page: page
+                        })
+                    }
 
-                return users
+                    return users
 
-            })
+                })
         }
 
     },
@@ -93,16 +94,44 @@ const WikiRepository = {
      * for specific user
      */
     getUserDetails: (user) => {
+        let relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards'];
         let wiki = document.querySelector('input[name=wiki]').value
         let username = encodeURIComponent(user.username)
         let query_url = "https://" + wiki + "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser="
         query_url += username + "&origin=*"
+        query_url += '&guiprop=groups|editcount|merged'
         return fetch(query_url)
             .then(res => res.json())
             .then(data => {
                 //console.log(JSON.stringify(data))
                 user['registration'] = data.query.globaluserinfo.registration
                 user['home'] = data.query.globaluserinfo.home
+                user['rights'] = data.query.globaluserinfo.merged;
+                user['editcount'] = data.query.globaluserinfo.editcount;
+
+                // Pick only homewiki rights that are in relevant user groups
+                user['rights'] = user['rights'].filter(
+                    item => 'groups' in item &&
+                    item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
+                    item.wiki === user['home']
+                );
+
+                // Flatten results into comma separated list
+                user['rights'] = user['rights'].map(item => {
+                    item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
+                    return item['groups'].join(', ')
+                })
+
+                /*
+                // sort by edit count
+                user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
+                // Make sure users have a group and relevant groups
+                user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
+
+                // sort by edit count
+                user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
+                */
+
                 return user
 
             }).catch(error => console.log(`error: ${error}`))
@@ -112,29 +141,29 @@ const WikiRepository = {
      * through Special:SiteMatrix
      */
     getPages: async (pageInputContainer, wikiInputContainer) => {
-        
+
         let pageInput = document.querySelector(pageInputContainer)
-		let wikiInput = document.querySelector(wikiInputContainer)
-		if(typeof wikiInput === 'indefined' || wikiInput.value === ''){
+        let wikiInput = document.querySelector(wikiInputContainer)
+        if (typeof wikiInput === 'indefined' || wikiInput.value === '') {
             console.log('empty value') // TODO: Notify user that value is empty
-			return Promise.resolve([]) // empty array
-		}
-		
-		let query_url = "https://" + wikiInput.value + "/w/api.php?action=query&list=search"
-		query_url += "&srsearch=" + pageInput.value + "&srnamespace=*"
+            return Promise.resolve([]) // empty array
+        }
+
+        let query_url = "https://" + wikiInput.value + "/w/api.php?action=query&list=search"
+        query_url += "&srsearch=" + pageInput.value + "&srnamespace=*"
         query_url += "&format=json&origin=*"
-        
+
         source = await fetch(query_url)
             .then(res => res.json())
             .then(data => {
                 // console.log(data)
                 let result = data.query.search.reduce((a, b) => a.concat(b.title), []);
                 return result;
-            }).catch(error => { 
+            }).catch(error => {
                 console.log(`error: ${error}`)
                 return []
             })
-            
+
         return source
-	},
+    }
 }

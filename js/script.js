@@ -77,6 +77,7 @@ const addRowToTable = (item) => {
     rowHTML += "<td>" + item.username + "</td>"
     rowHTML += "<td>" + item.home + "</td>"
     rowHTML += "<td>" + duration + "</td>"
+    rowHTML += "<td>" + (item.rights.length > 0 ? item.rights : "") + "</td>"
     row.innerHTML = rowHTML
     table.append(row)
 }
