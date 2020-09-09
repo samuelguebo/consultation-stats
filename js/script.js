@@ -8,7 +8,7 @@ let resultChart;
  * Chain previous methods together
  * and collect the data we need
  */
-const collectAllData = () => {
+const collectAllData = async () => {
     let list = {
         usernames: [],
         homewikis: []
@@ -18,24 +18,25 @@ const collectAllData = () => {
     let page = document.querySelector('input[name=page]').value
 
     if (wiki !== "" && page !== "") {
-        WikiRepository.getUsers()
-            .then(users => {
-                // display stats chart with empty data
-                Stats.displayChart([])
-                users.forEach(item => {
-                    WikiRepository.getUserDetails(item)
-                        .then(user => {
-                            if (list.usernames.indexOf(user.username) < 0) {
-                                updateUI(user)
-                                list.usernames.push(user.username)
-                                list.homewikis.push(user.home)
+        let users = await WikiRepository.getUsers()
 
-                                Stats.displayChart(list.homewikis)
-                            }
-                        }).catch(error => console.log(`error: ${error}`))
-                });
+        // display stats chart with empty data
+        Stats.displayChart([])
+        users.forEach(async (item) => {
+            let user = await WikiRepository.getUserDetails(item)
 
-            })
+            if (typeof user !== 'undefined' && user !== null) {
+                // Add recent edits
+                user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
+                if (list.usernames.indexOf(user.username) < 0) {
+                    updateUI(user)
+                    list.usernames.push(user.username)
+                    list.homewikis.push(user.home)
+                    Stats.displayChart(list.homewikis)
+                }
+            }
+        });
+
     } else {
         alert('Empty fields')
     }
@@ -78,6 +79,7 @@ const addRowToTable = (item) => {
     rowHTML += "<td>" + item.home + "</td>"
     rowHTML += "<td>" + duration + "</td>"
     rowHTML += "<td>" + (item.rights.length > 0 ? item.rights : "") + "</td>"
+    rowHTML += "<td>" + (item.recentedits.length < 500 ? item.recentedits.length : "+500") + "</td>"
     row.innerHTML = rowHTML
     table.append(row)
 }

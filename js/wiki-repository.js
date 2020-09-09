@@ -37,18 +37,15 @@ const WikiRepository = {
      * Extract users details
      * from JSON
      */
-    getUsers: () => {
+    getUsers: async () => {
 
         // Variables
         let wiki = document.querySelector('input[name=wiki]').value
         let page = document.querySelector('input[name=page]').value
-        //let limit = document.getElementById('limit').value()
-        //let from = new Date(document.getElementById('from').value())
-        //let until = new Date(document.getElementById('until').value())
+        // let limit = document.getElementById('limit').value()
+        // let from = new Date(document.getElementById('from').value())
+        // let until = new Date(document.getElementById('until').value())
         let limit = 500
-
-
-
 
         page = encodeURIComponent(page)
         let query_url = "https://" + wiki + "/w/api.php?action=query&prop=revisions"
@@ -66,7 +63,7 @@ const WikiRepository = {
         query_url += "&format=json&rvlimit=" + limit + "&origin=*"
 
         if (wiki !== "" && page !== "") {
-            return fetch(query_url)
+            let res = fetch(query_url)
                 .then(res => res.json())
                 .then(data => {
                     let users = []
@@ -86,6 +83,9 @@ const WikiRepository = {
                     return users
 
                 })
+            return res
+        } else {
+            return []
         }
 
     },
@@ -93,48 +93,61 @@ const WikiRepository = {
      * Get details including home project
      * for specific user
      */
-    getUserDetails: (user) => {
-        let relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards'];
+    getUserDetails: async (user) => {
+        let relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
         let wiki = document.querySelector('input[name=wiki]').value
         let username = encodeURIComponent(user.username)
         let query_url = "https://" + wiki + "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser="
         query_url += username + "&origin=*"
         query_url += '&guiprop=groups|editcount|merged'
-        return fetch(query_url)
-            .then(res => res.json())
-            .then(data => {
-                //console.log(JSON.stringify(data))
-                user['registration'] = data.query.globaluserinfo.registration
-                user['home'] = data.query.globaluserinfo.home
-                user['rights'] = data.query.globaluserinfo.merged;
-                user['editcount'] = data.query.globaluserinfo.editcount;
+        let res = null
+        try {
 
-                // Pick only homewiki rights that are in relevant user groups
-                user['rights'] = user['rights'].filter(
-                    item => 'groups' in item &&
-                    item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
-                    item.wiki === user['home']
-                );
+            res = await fetch(query_url)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.query.hasOwnProperty('globaluserinfo')) {
 
-                // Flatten results into comma separated list
-                user['rights'] = user['rights'].map(item => {
-                    item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
-                    return item['groups'].join(', ')
+                        //console.log(JSON.stringify(data))
+                        // console.log(username)
+                        user['registration'] = data.query.globaluserinfo.registration
+                        user['home'] = data.query.globaluserinfo.home
+                        user['rights'] = data.query.globaluserinfo.merged;
+                        user['editcount'] = data.query.globaluserinfo.editcount;
+
+                        // Extract homewiki url
+                        user['homeurl'] = user['rights'].filter(
+                            item => item.wiki === user['home']
+                        )[0]['url'];
+
+                        // Pick only homewiki rights that are in relevant user groups
+                        user['rights'] = user['rights'].filter(
+                            item => 'groups' in item &&
+                            item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
+                            item.wiki === user['home']
+                        );
+
+                        // Make sure users have a group and relevant groups
+                        user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
+
+                        // sort by edit count
+                        user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
+
+                        // Flatten results into comma separated list
+                        user['rights'] = user['rights'].map(item => {
+                            item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
+                            return item['groups'].join(', ')
+                        })
+
+                        return user
+                    }
                 })
+        } catch (e) {
+            // console.log(e)
+        }
 
-                /*
-                // sort by edit count
-                user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
-                // Make sure users have a group and relevant groups
-                user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
-
-                // sort by edit count
-                user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
-                */
-
-                return user
-
-            }).catch(error => console.log(`error: ${error}`))
+        return res
+        //.catch(error => console.log(`error: ${error}`))
     },
     /**
      * Collect list of all wikis obtained
@@ -160,7 +173,7 @@ const WikiRepository = {
                 let result = data.query.search.reduce((a, b) => a.concat(b.title), []);
                 return result;
             }).catch(error => {
-                console.log(`error: ${error}`)
+                // console.log(`error: ${error}`)
                 return []
             })
 
@@ -179,18 +192,22 @@ const WikiRepository = {
     },
 
     /**
-     * List the number of edits performed by a user
+     * List edits performed by a user
      * over a certain recent period
      */
-    getRecentEditCount: async () => {
-        /**
-         * TODO: use api
-         * https://fr.wikipedia.org/w/api.php?action=query&list=usercontribs&uclimit=500&ucend=2020-08-04T00:00:00Z&ucuser=Lomita&format=json
-         * 
-         * Check whether there is a "continue" key in result.
-         * If yes, return "+500 edits", else: return the edit count
-         **/
+    getRecentEdits: async (username, homewikiURI) => {
+        let lastMonth = new Date()
+        lastMonth.setDate(lastMonth.getDate() - 30)
+        lastMonth = lastMonth.toISOString()
 
+        let apiURI = homewikiURI + '/w/api.php?action=query&list=usercontribs'
+        apiURI += '&uclimit=500&ucend=' + lastMonth + '&ucuser=' + username + '&format=json&origin=*'
 
+        res = await fetch(apiURI)
+            .then(data => data.json())
+            .then(recentEdits => recentEdits.query.usercontribs)
+            .catch()
+
+        return res
     }
 }
