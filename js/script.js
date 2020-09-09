@@ -86,6 +86,26 @@ const addRowToTable = (item) => {
  * Start and stop animation
  */
 const init = () => {
+
+    // Catch permalink parameters
+    window.addEventListener('load', (e) => {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.has('wiki') && urlParams.has('page')) {
+
+            // Variables
+            let wiki = document.querySelector('input[name=wiki]')
+            let page = document.querySelector('input[name=page]')
+
+            wiki.value = urlParams.get('wiki')
+            page.value = urlParams.get('page')
+
+            // Trigger search
+            clearAllData();
+            collectAllData();
+        }
+
+    })
     let stop = document.querySelectorAll("#stop")[0]
     let running = false
 
@@ -93,9 +113,9 @@ const init = () => {
     let start = document.querySelectorAll("#start")[0]
     start.addEventListener("click", (e) => {
         running = true;
-        //stop.style.display = "inline-block"
-        clearAllData();
-        collectAllData();
+        e.preventDefault()
+        document.querySelector('#data form').submit()
+        // stop.style.display = "inline-block"
     })
 
     wikiAutoComplete();

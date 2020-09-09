@@ -65,7 +65,7 @@
 <body>
   <nav class="navbar navbar-light">
     <div class="container">
-      <h1 class="display-5">Consultation statistics</h1>
+      <h1 class="display-5"><a href="/">Consultation statistics</a></h1>
       <p class="lead">Analyzing quickly how diverse a wiki consultation is.</p>
     </div>
   </nav>
@@ -74,19 +74,17 @@
     <form class="form-row">
       <div class="form-group col-md-6">
         <label for="wiki">Wiki</label>
-        <input type="text" class="form-control" name="wiki" placeholder="meta.wikimedia.org">
+        <input type="text" class="form-control" name="wiki" placeholder="meta.wikimedia.org" autocomplete="off">
       </div>
       <div class="form-group col-md-6">
         <label for="wiki">Page</label>
-        <input type="text" class="form-control" name="page" placeholder="Full namespace">
+        <input type="text" class="form-control" name="page" placeholder="Full namespace" autocomplete="off">
       </div>
+
+      <h2>Results (<span id="total">0</span>)
+        <button type="button" class="btn btn-primary" id="start">Start</button>
+      </h2>
     </form>
-
-
-    <h2>Results (<span id="total">0</span>)
-      <button type="button" class="btn btn-primary" id="start">Start</button> <button type="button"
-        class="btn btn-warning" id="stop">Stop</button>
-    </h2>
 
     <table id="results-table" class="table table-striped">
       <thead>
