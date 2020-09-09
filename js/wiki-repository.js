@@ -197,11 +197,11 @@ const WikiRepository = {
      */
     getRecentEdits: async (username, homewikiURI) => {
         let lastMonth = new Date()
-        lastMonth.setDate(lastMonth.getDate() - 30)
+        lastMonth.setDate(lastMonth.getDate() - 15)
         lastMonth = lastMonth.toISOString()
 
         let apiURI = homewikiURI + '/w/api.php?action=query&list=usercontribs'
-        apiURI += '&uclimit=500&ucend=' + lastMonth + '&ucuser=' + username + '&format=json&origin=*'
+        apiURI += '&uclimit=50&ucend=' + lastMonth + '&ucuser=' + username + '&format=json&origin=*'
 
         res = await fetch(apiURI)
             .then(data => data.json())

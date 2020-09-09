@@ -57,7 +57,7 @@ const clearAllData = () => {
  * Update the number and provide a download button
  */
 const updateUI = (user) => {
-    if (typeof (user) !== 'indefined') {
+    if (typeof user !== 'undefined' && typeof user.username !== 'undefined') {
         addRowToTable(user)
         let counter = document.querySelectorAll("#data h2 span#total")[0]
         counter.innerText = parseInt(counter.innerText) + 1
@@ -79,7 +79,7 @@ const addRowToTable = (item) => {
     rowHTML += "<td>" + item.home + "</td>"
     rowHTML += "<td>" + duration + "</td>"
     rowHTML += "<td>" + (item.rights.length > 0 ? item.rights : "") + "</td>"
-    rowHTML += "<td>" + (item.recentedits.length < 500 ? item.recentedits.length : "+500") + "</td>"
+    rowHTML += "<td>" + (item.recentedits.length < 50 ? item.recentedits.length : "+50") + "</td>"
     row.innerHTML = rowHTML
     table.append(row)
 }
