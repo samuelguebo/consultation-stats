@@ -33,6 +33,7 @@ const WikiRepository = {
             return Promise.resolve(window.wikis)
         }
     },
+
     /**
      * Extract users details
      * from JSON
@@ -150,15 +151,15 @@ const WikiRepository = {
         //.catch(error => console.log(`error: ${error}`))
     },
     /**
-     * Collect list of all wikis obtained
-     * through Special:SiteMatrix
+     * Search and get pages that match certain 
+     * keywords
      */
     getPages: async (pageInputContainer, wikiInputContainer) => {
 
         let pageInput = document.querySelector(pageInputContainer)
         let wikiInput = document.querySelector(wikiInputContainer)
         if (typeof wikiInput === 'indefined' || wikiInput.value === '') {
-            console.log('empty value') // TODO: Notify user that value is empty
+            console.log('empty value')
             return Promise.resolve([]) // empty array
         }
 
@@ -185,8 +186,8 @@ const WikiRepository = {
      * over a certain recent period
      */
     getRecentBlocks: async () => {
-        // TODO: use api
-        // https://fr.wikipedia.org/w/api.php?action=query&list=blocks&bkusers=Jim167&format=json
+        // TODO: Implement the feature if needed
+        // https://fr.wikipedia.org/w/api.php?action=query&list=blocks&bkusers=<USERNAME>&format=json
 
 
     },
