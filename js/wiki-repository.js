@@ -35,60 +35,66 @@ const WikiRepository = {
     },
 
     /**
-     * Extract users details
-     * from JSON
+     * Obtain list of all edits from a page and 
+     * isolate all single accounts who edited it.
+     * Bypass the 500 limit using recursivity
      */
-    getUsers: async () => {
-
+    getUsers: async (limit = 500, data) => {
         // Variables
+        let query_url = '';
+        let users;
         let wiki = document.querySelector('input[name=wiki]').value
         let page = document.querySelector('input[name=page]').value
-        // let limit = document.getElementById('limit').value()
-        // let from = new Date(document.getElementById('from').value())
-        // let until = new Date(document.getElementById('until').value())
-        let limit = 500
 
-        page = encodeURIComponent(page)
-        let query_url = "https://" + wiki + "/w/api.php?action=query&prop=revisions"
-        query_url += "&titles=" + page + "&formatversion=2&redirects=1"
-        /*
-        if (limit === "") {
-            limit = 500
-        }
-        if (from.length !== "" && until.length !== "") {
-            query_url += `&revstart=${from.getTime()}`
-            query_url += `&revend=${until.getTime()}`
-        }
-        */
+        page = encodeURIComponent(page);
+        // console.log(data)
+        if (wiki !== '' && page !== '') {
+            if (
+                typeof data !== 'undefined' &&
+                typeof data.continue.rvcontinue !== 'undefined'
+            ) {
+                query_url = `https://${wiki}/w/api.php?action=query&prop=revisions&titles=${page}&formatversion=2&redirects=1&format=json&rvlimit=${limit}&origin=*`;
+                query_url += `&rvcontinue=${data.continue.rvcontinue}`;
+                users = data.users
+            } else {
+                query_url =
+                    'https://' + wiki + '/w/api.php?action=query&prop=revisions';
+                query_url += '&titles=' + page + '&formatversion=2&redirects=1';
+                query_url += '&format=json&rvlimit=' + limit + '&origin=*';
+            }
 
-        query_url += "&format=json&rvlimit=" + limit + "&origin=*"
+            let res = await fetch(query_url);
+            data = await res.json();
 
-        if (wiki !== "" && page !== "") {
-            let res = fetch(query_url)
-                .then(res => res.json())
-                .then(data => {
-                    let users = []
-                    let results = data.query.pages[0].revisions
-                    let page = data.query.pages[0].title
+            let results = data.query.pages[0].revisions;
+            let title = data.query.pages[0].title;
 
-                    for (let user of results) {
-                        // keep only sock masters
-                        users.push({
-                            timestamp: user['timestamp'],
-                            username: user['user'],
-                            revid: user['revid'],
-                            page: page
-                        })
-                    }
+            if (typeof users === 'undefined') {
+                users = []
+            }
 
-                    return users
+            for (let user of results) {
+                // build list of accounts
+                users.push({
+                    timestamp: user['timestamp'],
+                    username: user['user'],
+                    revid: user['revid'],
+                    page: title,
+                });
+            }
 
-                })
-            return res
+            data['users'] = users
+            // console.log(users.length);
+
+            // continue to process batch otherwise return users
+            if (!data.hasOwnProperty('batchcomplete')) {
+                await WikiRepository.getUsers(limit, data);
+            }
+            return users;
+
         } else {
-            return []
+            return [];
         }
-
     },
     /**
      * Get details including home project

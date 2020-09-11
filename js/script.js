@@ -19,6 +19,7 @@ const collectAllData = async () => {
 
     if (wiki !== "" && page !== "") {
         let users = await WikiRepository.getUsers()
+        console.log('users', users)
 
         // display stats chart with empty data
         Stats.displayChart([])
