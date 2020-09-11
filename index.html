@@ -57,6 +57,43 @@
       padding: 20px 0px;
       font-size: .95em;
     }
+
+    /* Sortable tables */
+    table.sortable thead {
+      font-weight: bold;
+      cursor: default;
+    }
+
+    table.sortable th:after,
+    table.sortable th span {
+      color: salmon;
+    }
+
+    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+      content: " \25B4\25BE";
+      font-size: .8em;
+      display: inline-block;
+      margin: 0px 5px;
+    }
+
+    table.sortable tbody {
+      counter-reset: sortabletablescope;
+    }
+
+    table.sortable thead tr::before {
+      content: "";
+      display: table-cell;
+    }
+
+    table.sortable tbody tr::before {
+      content: counter(sortabletablescope);
+      counter-increment: sortabletablescope;
+      display: table-cell;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      vertical-align: middle;
+      padding: 0px 3px;
+    }
   </style>
 </head>
 
@@ -84,10 +121,10 @@
       </h2>
     </form>
 
-    <table id="results-table" class="table table-striped">
+    <table id="results-table" class="table table-striped sortable">
       <thead>
         <tr>
-          <th>#</th>
+          <!-- <th>#</th> -->
           <th>Username</th>
           <th>Home</th>
           <th>Seniority</th>
@@ -127,6 +164,7 @@
   <script src="js/script.js"></script>
   <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
   <script src="js/stats.js"></script>
+  <script src="js/sortable.js"></script>
 </body>
 
 </html>

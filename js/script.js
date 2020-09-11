@@ -74,7 +74,8 @@ const addRowToTable = (item) => {
     let row = document.createElement("tr")
     //let duration = getDuration(new Date(item.registration), new Date())
     let duration = new Date(item.registration).getFullYear()
-    let rowHTML = "<td>" + (count++) + "</td>"
+    let rowHTML = ""
+    // rowHTML += "<td>" + (count++) + "</td>"
     rowHTML += `<td><a href="${item.homeurl}/wiki/User:${item.username}">${item.username}</a></td>`
     rowHTML += "<td>" + item.home + "</td>"
     rowHTML += "<td>" + duration + "</td>"
