@@ -24,6 +24,7 @@ const Stats = {
     };
     // For a pie chart
     let chartContainer = document.querySelector("#resultChart")
+    chartContainer.style.display = 'block'
     let ctx = chartContainer.getContext('2d')
     ctx.textAligh = 'left'
 

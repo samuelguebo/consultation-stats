@@ -18,11 +18,11 @@ const collectAllData = async () => {
     let page = document.querySelector('input[name=page]').value
 
     if (wiki !== "" && page !== "") {
+        document.querySelector('#preloader').style.display = 'block'
         let users = await WikiRepository.getUsers()
-        console.log('users', users)
+        // console.log('users', users)
 
         // display stats chart with empty data
-        Stats.displayChart([])
         users.forEach(async (item) => {
             let user = await WikiRepository.getUserDetails(item)
 
@@ -37,6 +37,9 @@ const collectAllData = async () => {
                 }
             }
         });
+
+        Stats.displayChart([])
+
 
     } else {
         alert('Empty fields')
@@ -58,6 +61,8 @@ const clearAllData = () => {
  * Update the number and provide a download button
  */
 const updateUI = (user) => {
+    document.querySelector('#preloader').style.display = 'none'
+
     if (typeof user !== 'undefined' && typeof user.username !== 'undefined') {
         addRowToTable(user)
         let counter = document.querySelectorAll("#data h2 span#total")[0]
