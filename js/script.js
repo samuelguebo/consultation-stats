@@ -18,6 +18,7 @@ const collectAllData = async () => {
     let page = document.querySelector('input[name=page]').value
 
     if (wiki !== "" && page !== "") {
+        document.querySelector('.canvas-wrapper').style.display = 'block'
         document.querySelector('#preloader').style.display = 'block'
         let users = await WikiRepository.getUsers()
         // console.log('users', users)
