@@ -5,8 +5,7 @@
 let resultChart;
 
 /**
- * Chain previous methods together
- * and collect the data we need
+ * Collect the data we need asynchronously
  */
 const collectAllData = async () => {
     let list = {
@@ -23,7 +22,6 @@ const collectAllData = async () => {
         let users = await WikiRepository.getUsers()
         // console.log('users', users)
 
-        // display stats chart with empty data
         users.forEach(async (item) => {
             let user = await WikiRepository.getUserDetails(item)
 
@@ -39,6 +37,7 @@ const collectAllData = async () => {
             }
         });
 
+        // display stats chart with empty data
         Stats.displayChart([])
 
 
@@ -59,7 +58,10 @@ const clearAllData = () => {
 }
 
 /**
- * Update the number and provide a download button
+ * Update the user interface by adding new users
+ * to the table with their relevant details
+ * 
+ * @param {Object} user 
  */
 const updateUI = (user) => {
     document.querySelector('#preloader').style.display = 'none'
@@ -73,6 +75,8 @@ const updateUI = (user) => {
 
 /**
  * Append row to the table
+ * 
+ * @param {Object} item
  */
 const addRowToTable = (item) => {
     // build HTML rows
@@ -97,7 +101,7 @@ const addRowToTable = (item) => {
  */
 const init = () => {
 
-    // Catch permalink parameters
+    // Extract URL parameters
     window.addEventListener('load', (e) => {
         const urlParams = new URLSearchParams(window.location.search);
 

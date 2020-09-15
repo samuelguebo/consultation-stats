@@ -1,5 +1,8 @@
 const Stats = {
-
+  /**
+   * Create chart in UI
+   * @param {Array of objects} list 
+   */
   displayChart: function (list) {
 
     // Stats data
@@ -64,7 +67,10 @@ const Stats = {
   /**
    * Get proportion of contributors
    * arranged by wikis
+   * 
+   * @param {Object} data 
    */
+
   percentile: function (data) {
     return data.reduce((wiki, i) => {
       if (typeof wiki[i] !== 'undefined') {

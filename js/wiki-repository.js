@@ -99,6 +99,8 @@ const WikiRepository = {
     /**
      * Get details including home project
      * for specific user
+     * 
+     * @param {Object} user 
      */
     getUserDetails: async (user) => {
         let relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
@@ -156,6 +158,7 @@ const WikiRepository = {
         return res
         //.catch(error => console.log(`error: ${error}`))
     },
+
     /**
      * Search and get pages that match certain 
      * keywords
