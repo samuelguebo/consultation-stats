@@ -28,12 +28,12 @@ const collectAllData = async () => {
             if (typeof user !== 'undefined' && user !== null) {
                 // Add recent edits
                 user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
-                if (list.usernames.indexOf(user.username) < 0) {
-                    updateUI(user)
-                    list.usernames.push(user.username)
-                    list.homewikis.push(user.home)
-                    Stats.displayChart(list.homewikis)
-                }
+                // if (list.usernames.indexOf(user.username) < 0) {
+                updateUI(user)
+                list.usernames.push(user.username)
+                list.homewikis.push(user.home)
+                Stats.displayChart(list.homewikis)
+                //}
             }
         });
 

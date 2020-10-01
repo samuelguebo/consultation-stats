@@ -22,7 +22,7 @@ const Stats = {
         ]
       }],
 
-      labels: Object.keys(list),
+      labels: Object.keys(list).slice(0, 32),
 
     };
     // For a pie chart
@@ -55,7 +55,7 @@ const Stats = {
     // update
     else {
 
-      resultChart.data.labels = Object.keys(list)
+      resultChart.data.labels = Object.keys(list).slice(0, 32)
       resultChart.data.datasets[0].data = Object.values(list)
 
       resultChart.update();

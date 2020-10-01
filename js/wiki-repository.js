@@ -56,6 +56,7 @@ const WikiRepository = {
                 query_url = `https://${wiki}/w/api.php?action=query&prop=revisions&titles=${page}&formatversion=2&redirects=1&format=json&rvlimit=${limit}&origin=*`;
                 query_url += `&rvcontinue=${data.continue.rvcontinue}`;
                 users = data.users
+                usernames = data.usernames
             } else {
                 query_url =
                     'https://' + wiki + '/w/api.php?action=query&prop=revisions';
@@ -69,21 +70,29 @@ const WikiRepository = {
             let results = data.query.pages[0].revisions;
             let title = data.query.pages[0].title;
 
-            if (typeof users === 'undefined') {
+            if (typeof users === 'undefined' || usernames === 'undefined') {
                 users = []
+                usernames = []
             }
 
             for (let user of results) {
-                // build list of accounts
-                users.push({
+                let item = {
                     timestamp: user['timestamp'],
                     username: user['user'],
                     revid: user['revid'],
                     page: title,
-                });
+                }
+
+                // build list of users, avoid dulication
+                if (usernames.indexOf(item.username) < 0) {
+                    users.push(item);
+                    usernames.push(item.username);
+                }
+
             }
 
             data['users'] = users
+            data['usernames'] = usernames
             // console.log(users.length);
 
             // continue to process batch otherwise return users
