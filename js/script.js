@@ -8,7 +8,6 @@ let resultChart;
  * Collect the data we need asynchronously
  */
 const collectAllData = async () => {
-    const limit = 2000 // Do not exceed HTTP requests
     let list = {
         usernames: [],
         homewikis: []
@@ -24,7 +23,7 @@ const collectAllData = async () => {
         // console.log('users', users)
 
         // limit number of results to process, for saving resources
-        users.slice(0, limit).forEach(async (item) => {
+        users.forEach(async (item) => {
             let user = await WikiRepository.getUserDetails(item)
 
             if (typeof user !== 'undefined' && user !== null) {

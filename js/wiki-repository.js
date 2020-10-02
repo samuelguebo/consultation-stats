@@ -45,6 +45,7 @@ const WikiRepository = {
         let users;
         let wiki = document.querySelector('input[name=wiki]').value
         let page = document.querySelector('input[name=page]').value
+        const userNumberLimit = 2000 // Arbitrary limit for saving resources
 
         page = encodeURIComponent(page);
         // console.log(data)
@@ -96,7 +97,7 @@ const WikiRepository = {
             // console.log(users.length);
 
             // continue to process batch otherwise return users
-            if (!data.hasOwnProperty('batchcomplete')) {
+            if (!data.hasOwnProperty('batchcomplete') && data['usernames'].length <= userNumberLimit) {
                 await WikiRepository.getUsers(limit, data);
             }
             return users;
@@ -119,52 +120,47 @@ const WikiRepository = {
         query_url += username + "&origin=*"
         query_url += '&guiprop=groups|editcount|merged'
         let res = null
-        try {
 
-            res = await fetch(query_url)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.query.hasOwnProperty('globaluserinfo')) {
+        res = await fetch(query_url)
+            .then(res => res.json())
+            .then(data => {
+                // return empty detail on error
+                if (data.query.hasOwnProperty('globaluserinfo')) {
 
-                        //console.log(JSON.stringify(data))
-                        // console.log(username)
-                        user['registration'] = data.query.globaluserinfo.registration
-                        user['home'] = data.query.globaluserinfo.home
-                        user['rights'] = data.query.globaluserinfo.merged;
-                        user['editcount'] = data.query.globaluserinfo.editcount;
+                    user['registration'] = data.query.globaluserinfo.registration
+                    user['home'] = data.query.globaluserinfo.home
+                    user['rights'] = data.query.globaluserinfo.merged;
+                    user['editcount'] = data.query.globaluserinfo.editcount;
 
-                        // Extract homewiki url
-                        user['homeurl'] = user['rights'].filter(
-                            item => item.wiki === user['home']
-                        )[0]['url'];
+                    // Extract homewiki url
+                    user['homeurl'] = user['rights'].filter(
+                        item => item.wiki === user['home']
+                    )[0]['url'];
 
-                        // Pick only homewiki rights that are in relevant user groups
-                        user['rights'] = user['rights'].filter(
-                            item => 'groups' in item &&
-                            item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
-                            item.wiki === user['home']
-                        );
+                    // Pick only homewiki rights that are in relevant user groups
+                    user['rights'] = user['rights'].filter(
+                        item => 'groups' in item &&
+                        item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
+                        item.wiki === user['home']
+                    );
 
-                        // Make sure users have a group and relevant groups
-                        user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
+                    // Make sure users have a group and relevant groups
+                    user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
 
-                        // sort by edit count
-                        user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
+                    // sort by edit count
+                    user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
 
-                        // Flatten results into comma separated list
-                        user['rights'] = user['rights'].map(item => {
-                            item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
-                            return item['groups'].join(', ')
-                        })
+                    // Flatten results into comma separated list
+                    user['rights'] = user['rights'].map(item => {
+                        item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
+                        return item['groups'].join(', ')
+                    })
 
-                        return user
-                    }
-                }).catch(e => {
-                    console.log(e)
-                })
-        } catch (e) {
-            // console.log(e)
-        }
+                    return user
+                }
+            }).catch(e => {
+                return null
+            })
 
         return res
         //.catch(error => console.log(`error: ${error}`))
