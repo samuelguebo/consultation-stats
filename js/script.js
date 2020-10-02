@@ -3,44 +3,21 @@
  * 
  */
 let resultChart;
+let list = {
+    usernames: [],
+    homewikis: []
+}
 
 /**
  * Collect the data we need asynchronously
  */
 const collectAllData = async () => {
-    let list = {
-        usernames: [],
-        homewikis: []
-    }
-    // Variables
     let wiki = document.querySelector('input[name=wiki]').value
     let page = document.querySelector('input[name=page]').value
-
     if (wiki !== "" && page !== "") {
         document.querySelector('.canvas-wrapper').style.display = 'block'
         document.querySelector('#preloader').style.display = 'block'
-        let users = await WikiRepository.getUsers()
-        // console.log('users', users)
-
-        // limit number of results to process, for saving resources
-        users.forEach(async (item) => {
-            let user = await WikiRepository.getUserDetails(item)
-
-            if (typeof user !== 'undefined' && user !== null) {
-                // Add recent edits
-                user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
-                // if (list.usernames.indexOf(user.username) < 0) {
-                updateUI(user)
-                list.usernames.push(user.username)
-                list.homewikis.push(user.home)
-                Stats.displayChart(list.homewikis)
-                //}
-            }
-        });
-
-        // display stats chart with empty data
-        Stats.displayChart([])
-
+        WikiRepository.getUsers()
 
     } else {
         alert('Empty fields')

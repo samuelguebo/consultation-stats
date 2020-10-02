@@ -40,31 +40,33 @@ const WikiRepository = {
      * Bypass the 500 limit using recursivity
      */
     getUsers: async (limit = 500, data) => {
-        // Variables
         let query_url = '';
         let users;
         let wiki = document.querySelector('input[name=wiki]').value
         let page = document.querySelector('input[name=page]').value
-        const userNumberLimit = 2000 // Arbitrary limit for saving resources
+        const userNumberLimit = 1000 // Arbitrary limit for saving resources
 
         page = encodeURIComponent(page);
-        // console.log(data)
         if (wiki !== '' && page !== '') {
-            if (
-                typeof data !== 'undefined' &&
-                typeof data.continue.rvcontinue !== 'undefined'
-            ) {
-                query_url = `https://${wiki}/w/api.php?action=query&prop=revisions&titles=${page}&formatversion=2&redirects=1&format=json&rvlimit=${limit}&origin=*`;
+            if (typeof data !== 'undefined' &&
+                typeof data.continue.rvcontinue !== 'undefined') {
+
+                // If a "rvcontinue" parameters exits, build URI differently
+                query_url = `https://${wiki}/w/api.php?action=query&prop=revisions`
+                query_url += `&titles=${page}&formatversion=2&redirects=1&format=json`;
+                query_url += `&rvlimit=${limit}&origin=*`;
                 query_url += `&rvcontinue=${data.continue.rvcontinue}`;
-                users = data.users
-                usernames = data.usernames
+
             } else {
-                query_url =
-                    'https://' + wiki + '/w/api.php?action=query&prop=revisions';
-                query_url += '&titles=' + page + '&formatversion=2&redirects=1';
-                query_url += '&format=json&rvlimit=' + limit + '&origin=*';
+                query_url = `https://${wiki}/w/api.php?action=query&prop=revisions`
+                query_url += `&titles=${page}&formatversion=2&redirects=1&format=json`;
+                query_url += `&rvlimit=${limit}&origin=*`;
+
+                // display stats chart with empty data the first time
+                Stats.displayChart([])
             }
 
+            // Get edits and extract users
             let res = await fetch(query_url);
             data = await res.json();
 
@@ -76,35 +78,52 @@ const WikiRepository = {
                 usernames = []
             }
 
+            // Loop through users and populate UI
             for (let user of results) {
-                let item = {
+                user = {
                     timestamp: user['timestamp'],
                     username: user['user'],
                     revid: user['revid'],
                     page: title,
                 }
 
-                // build list of users, avoid dulication
-                if (usernames.indexOf(item.username) < 0) {
-                    users.push(item);
-                    usernames.push(item.username);
+                // Avoid dupicates by keeping track of table list
+                if (usernames.indexOf(user.username) < 0) {
+                    usernames.push(user.username);
+
+                    // Collect additional details about contributor
+                    WikiRepository.getUserDetails(user).then(async user => {
+                        if (typeof user !== 'undefined' && user !== null) {
+                            // Add recent edits
+                            user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
+
+                            // Discard duplicates
+                            if (list.usernames.indexOf(user.username) < 0) {
+                                updateUI(user)
+                                list.usernames.push(user.username)
+                                list.homewikis.push(user.home)
+
+                                // Refresh chart
+                                Stats.displayChart(list.homewikis)
+                            }
+                        }
+                    })
                 }
 
             }
 
-            data['users'] = users
-            data['usernames'] = usernames
-            // console.log(users.length);
-
-            // continue to process batch otherwise return users
-            if (!data.hasOwnProperty('batchcomplete') && data['usernames'].length <= userNumberLimit) {
+            // limit number of results to process, for saving resources
+            if (!data.hasOwnProperty('batchcomplete') &&
+                list.usernames.length <= userNumberLimit) {
+                // continue to process batch otherwise return users
                 await WikiRepository.getUsers(limit, data);
             }
-            return users;
 
-        } else {
-            return [];
+            return list.usernames;
+
         }
+
+        return [];
     },
     /**
      * Get details including home project
