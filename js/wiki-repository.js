@@ -138,11 +138,14 @@ const WikiRepository = {
         let query_url = "https://" + wiki + "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser="
         query_url += username + "&origin=*"
         query_url += '&guiprop=groups|editcount|merged'
-        let res = null
 
-        res = await fetch(query_url)
+        return fetch(query_url)
             .then(res => res.json())
             .then(data => {
+                if (data.hasOwnProperty('error')) {
+                    return null
+                }
+
                 // return empty detail on error
                 if (data.query.hasOwnProperty('globaluserinfo')) {
 
@@ -178,11 +181,9 @@ const WikiRepository = {
                     return user
                 }
             }).catch(e => {
+                // console.log(`error: ${error}`)
                 return null
             })
-
-        return res
-        //.catch(error => console.log(`error: ${error}`))
     },
 
     /**
