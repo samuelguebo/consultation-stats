@@ -4,5 +4,5 @@ A minimalist utility gathering stats about editors who participated in a Mediawi
 ## Overview
 ![](https://tools-static.wmflabs.org/consultation-stats/consultation-stats-screenshot.png)
 
-## Contributors
- * Samuel Guebo ([@samuelguebo](https://github.com/samuelguebo))
+## Contributing
+Feel free to flag bugs or submit pull requests!
