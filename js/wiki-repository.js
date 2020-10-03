@@ -143,6 +143,10 @@ const WikiRepository = {
         res = await fetch(query_url)
             .then(res => res.json())
             .then(data => {
+                if (data.hasOwnProperty('error')) {
+                    return null
+                }
+
                 // return empty detail on error
                 if (data.query.hasOwnProperty('globaluserinfo')) {
 
