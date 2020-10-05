@@ -27,7 +27,7 @@ const WikiRepository = {
                     data = data.map((wiki) => wiki.url.replace('https://', ''))
                     window.wikis = data.concat(specials)
                     return window.wikis
-                })
+                }).catch(e => {})
 
         } else {
             return Promise.resolve(window.wikis)
@@ -67,59 +67,65 @@ const WikiRepository = {
             }
 
             // Get edits and extract users
-            let res = await fetch(query_url);
-            data = await res.json();
+            try {
 
-            let results = data.query.pages[0].revisions;
-            let title = data.query.pages[0].title;
 
-            if (typeof users === 'undefined' || usernames === 'undefined') {
-                users = []
-                usernames = []
-            }
+                let res = await fetch(query_url);
+                data = await res.json();
 
-            // Loop through users and populate UI
-            for (let user of results) {
-                user = {
-                    timestamp: user['timestamp'],
-                    username: user['user'],
-                    revid: user['revid'],
-                    page: title,
+                let results = data.query.pages[0].revisions;
+                let title = data.query.pages[0].title;
+
+                if (typeof users === 'undefined' || usernames === 'undefined') {
+                    users = []
+                    usernames = []
                 }
 
-                // Avoid dupicates by keeping track of table list
-                if (usernames.indexOf(user.username) < 0) {
-                    usernames.push(user.username);
+                // Loop through users and populate UI
+                for (let user of results) {
+                    user = {
+                        timestamp: user['timestamp'],
+                        username: user['user'],
+                        revid: user['revid'],
+                        page: title,
+                    }
 
-                    // Collect additional details about contributor
-                    WikiRepository.getUserDetails(user).then(async user => {
-                        if (typeof user !== 'undefined' && user !== null) {
-                            // Add recent edits
-                            user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
+                    // Avoid dupicates by keeping track of table list
+                    if (usernames.indexOf(user.username) < 0) {
+                        usernames.push(user.username);
 
-                            // Discard duplicates
-                            if (list.usernames.indexOf(user.username) < 0) {
-                                updateUI(user)
-                                list.usernames.push(user.username)
-                                list.homewikis.push(user.home)
+                        // Collect additional details about contributor
+                        WikiRepository.getUserDetails(user).then(async user => {
+                            if (typeof user !== 'undefined' && user !== null) {
+                                // Add recent edits
+                                user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
 
-                                // Refresh chart
-                                Stats.displayChart(list.homewikis)
+                                // Discard duplicates
+                                if (list.usernames.indexOf(user.username) < 0) {
+                                    updateUI(user)
+                                    list.usernames.push(user.username)
+                                    list.homewikis.push(user.home)
+
+                                    // Refresh chart
+                                    Stats.displayChart(list.homewikis)
+                                }
                             }
-                        }
-                    })
+                        }).catch(e => {})
+                    }
+
                 }
 
-            }
+                // limit number of results to process, for saving resources
+                if (!data.hasOwnProperty('batchcomplete') &&
+                    list.usernames.length <= userNumberLimit) {
+                    // continue to process batch otherwise return users
+                    await WikiRepository.getUsers(limit, data);
+                }
 
-            // limit number of results to process, for saving resources
-            if (!data.hasOwnProperty('batchcomplete') &&
-                list.usernames.length <= userNumberLimit) {
-                // continue to process batch otherwise return users
-                await WikiRepository.getUsers(limit, data);
+                return list.usernames;
+            } catch (e) {
+                // fails silently
             }
-
-            return list.usernames;
 
         }
 
