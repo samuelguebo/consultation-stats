@@ -167,9 +167,9 @@ const WikiRepository = {
 
                     // Pick only homewiki rights that are in relevant user groups
                     user['rights'] = user['rights'].filter(
-                        item => 'groups' in item &&
-                        item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
-                        item.wiki === user['home']
+                        item => item.wiki === user['home'] &&
+                        'groups' in item &&
+                        item.groups.some(r => relevantGroups.includes(r.toLowerCase()))
                     );
 
                     // Make sure users have a group and relevant groups
