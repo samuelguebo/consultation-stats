@@ -1,268 +1,305 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Consultation statistics | Demographic insights about on-wiki discussions
+    </title>
+    <link
+      rel="stylesheet"
+      href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
+      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+      crossorigin="anonymous"
+    />
+    <!-- auto complete -->
+    <link
+      rel="stylesheet"
+      href="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.min.css"
+    />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consultation statistics | Demographic insights about on-wiki discussions</title>
-  <link rel="stylesheet" href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
-    integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
-  <!-- auto complete -->
-  <link rel="stylesheet"
-    href="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.min.css">
+    <!-- inline css -->
+    <style>
+      a {
+        color: #ff7a7a;
+      }
 
-  <!-- inline css -->
-  <style>
-    a {
-      color: #ff7a7a;
-    }
+      button#stop {
+        display: none;
+      }
 
-    button#stop {
-      display: none;
-    }
+      canvas {
+        display: none;
+        max-width: 100%;
+        height: auto;
+        max-height: 200px;
+        /* margin: 0 auto; */
+        margin-bottom: 20px;
+        margin-top: 20px;
+      }
 
-    canvas {
-      display: none;
-      max-width: 100%;
-      height: auto;
-      max-height: 200px;
-      /* margin: 0 auto; */
-      margin-bottom: 20px;
-      margin-top: 20px;
-    }
+      .canvas-wrapper {
+        display: none;
+        position: relative;
+        width: 100%;
+        min-height: 200px;
+      }
 
-    .canvas-wrapper {
-      display: none;
-      position: relative;
-      width: 100%;
-      min-height: 200px;
-    }
+      ol,
+      ul {
+        padding-left: 0px;
+      }
 
-    ol,
-    ul {
-      padding-left: 0px;
-    }
+      #data form li {
+        margin: -2px 0px 0px 0px;
+      }
 
-    #data form li {
-      margin: -2px 0px 0px 0px;
-    }
+      .container form.form-row .form-group {
+        padding-left: 0;
+      }
 
-    .container form.form-row .form-group {
-      padding-left: 0;
-    }
+      .navbar-light {
+        background-color: #ffead4;
+        margin-bottom: 0px;
+        padding: 40px 10px;
+      }
 
-    .navbar-light {
-      background-color: #ffead4;
-      margin-bottom: 0px;
-      padding: 40px 10px;
-    }
+      #results-table {
+        margin-bottom: 30px;
+      }
 
-    #results-table {
-      margin-bottom: 30px;
-    }
+      footer #footer {
+        padding: 20px 0px;
+        font-size: 0.95em;
+      }
 
-    footer #footer {
-      padding: 20px 0px;
-      font-size: .95em;
-    }
+      /* Sortable tables */
+      table.sortable thead {
+        font-weight: bold;
+        cursor: default;
+      }
 
-    /* Sortable tables */
-    table.sortable thead {
-      font-weight: bold;
-      cursor: default;
-    }
+      table.sortable th:after,
+      table.sortable th span {
+        color: salmon;
+      }
 
-    table.sortable th:after,
-    table.sortable th span {
-      color: salmon;
-    }
+      table.sortable
+        th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
+        content: " \25B4\25BE";
+        font-size: 0.8em;
+        display: inline-block;
+        margin: 0px 5px;
+      }
 
-    table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after {
-      content: " \25B4\25BE";
-      font-size: .8em;
-      display: inline-block;
-      margin: 0px 5px;
-    }
+      table.sortable tbody {
+        counter-reset: sortabletablescope;
+      }
 
-    table.sortable tbody {
-      counter-reset: sortabletablescope;
-    }
+      table.sortable thead tr::before {
+        content: "";
+        display: table-cell;
+      }
 
-    table.sortable thead tr::before {
-      content: "";
-      display: table-cell;
-    }
+      table.sortable tbody tr::before {
+        content: counter(sortabletablescope);
+        counter-increment: sortabletablescope;
+        display: table-cell;
+        border-top: 1px solid #ddd;
+        text-align: center;
+        vertical-align: middle;
+        padding: 0px 3px;
+      }
 
-    table.sortable tbody tr::before {
-      content: counter(sortabletablescope);
-      counter-increment: sortabletablescope;
-      display: table-cell;
-      border-top: 1px solid #ddd;
-      text-align: center;
-      vertical-align: middle;
-      padding: 0px 3px;
-    }
-
-    /**
+      /**
       * Loading animation
       */
-    #preloader {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    #loader {
-      display: block;
-      position: relative;
-      left: 50%;
-      top: 50%;
-      width: 120px;
-      height: 120px;
-      margin: -50px 0 0 -50px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      border-top-color: salmon;
-      -webkit-animation: spin 2s linear infinite;
-      animation: spin 2s linear infinite;
-    }
-
-    #loader:before {
-      content: "";
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      right: 5px;
-      bottom: 5px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      border-top-color: #a4d0ff;
-      -webkit-animation: spin 3s linear infinite;
-      animation: spin 3s linear infinite;
-    }
-
-    #loader:after {
-      content: "";
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      right: 15px;
-      bottom: 15px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      border-top-color: #fddea3;
-      -webkit-animation: spin 1.5s linear infinite;
-      animation: spin 1.5s linear infinite;
-    }
-
-    @-webkit-keyframes spin {
-      0% {
-        -webkit-transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        transform: rotate(0deg);
+      #preloader {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
       }
 
-      100% {
-        -webkit-transform: rotate(360deg);
-        -ms-transform: rotate(360deg);
-        transform: rotate(360deg);
+      #loader {
+        display: block;
+        position: relative;
+        left: 50%;
+        top: 50%;
+        width: 120px;
+        height: 120px;
+        margin: -50px 0 0 -50px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: salmon;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
       }
-    }
 
-    @keyframes spin {
-      0% {
-        -webkit-transform: rotate(0deg);
-        -ms-transform: rotate(0deg);
-        transform: rotate(0deg);
+      #loader:before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: #a4d0ff;
+        -webkit-animation: spin 3s linear infinite;
+        animation: spin 3s linear infinite;
       }
 
-      100% {
-        -webkit-transform: rotate(360deg);
-        -ms-transform: rotate(360deg);
-        transform: rotate(360deg);
+      #loader:after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: #fddea3;
+        -webkit-animation: spin 1.5s linear infinite;
+        animation: spin 1.5s linear infinite;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <nav class="navbar navbar-light">
-    <div class="container">
+      @-webkit-keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+          -ms-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
 
-      <h1 class="display-5"><a href="/">Consultation statistics</a></h1>
-      <p class="lead">Analyzing quickly how diverse a wiki consultation is.</p>
-    </div>
-  </nav>
-  <section id="data" class="container">
-    <div class="canvas-wrapper">
-      <canvas id="resultChart" height="0" width="0"></canvas>
+        100% {
+          -webkit-transform: rotate(360deg);
+          -ms-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
 
-      <div id="preloader">
-        <div id="loader"></div>
-      </div>
-    </div>
-    <form class="form-row">
-      <div class="form-group col-md-6">
-        <label for="wiki">Wiki</label>
-        <input type="text" class="form-control" name="wiki" placeholder="meta.wikimedia.org" autocomplete="off">
-      </div>
-      <div class="form-group col-md-6">
-        <label for="wiki">Page</label>
-        <input type="text" class="form-control" name="page" placeholder="Full namespace" autocomplete="off">
-      </div>
+      @keyframes spin {
+        0% {
+          -webkit-transform: rotate(0deg);
+          -ms-transform: rotate(0deg);
+          transform: rotate(0deg);
+        }
 
-      <h2>Results (<span id="total">0</span>)
-        <button type="button" class="btn btn-primary" id="start">Start</button>
-      </h2>
-    </form>
+        100% {
+          -webkit-transform: rotate(360deg);
+          -ms-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
 
-    <table id="results-table" class="table table-striped sortable">
-      <thead>
-        <tr>
-          <!-- <th>#</th> -->
-          <th>Username</th>
-          <th>Home</th>
-          <th>Seniority</th>
-          <th>Advanced rights</th>
-          <th>Edits in last 15 days</th>
-        </tr>
-      </thead>
-      <tbody>
-
-      </tbody>
-    </table>
-
-  </section>
-  <footer class="container footer">
-    <hr class="featurette-divider">
-    <div id="footer">
+  <body>
+    <nav class="navbar navbar-light">
       <div class="container">
-        <div class="row">
-          <div class="col-md-5">
-            <a href="https://wikimediafoundation.org/wiki/Privacy_policy">Privacy Policy</a> |
-            <a href="https://wikitech.wikimedia.org/wiki/Wikitech:Labs_Terms_of_use">Terms of Use</a> |
-            <a href="https://phabricator.wikimedia.org/maniphest/task/create/?projects=trust-and-safety">Report a
-              bug!</a>
-          </div>
-          <div class="col-md-7">
-            Hosted on <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS">Wikimedia Cloud VPS</a> and written
-            by <a href="https://meta.wikimedia.org/wiki/User:Samuel_(WMF)">Samuel (WMF)</a> | <a
-              href="http://github.com/samuelguebo/consultation-stats">Source code </a>
+        <h1 class="display-5"><a href="/">Consultation statistics</a></h1>
+        <p class="lead">
+          Analyzing quickly how diverse a wiki consultation is.
+        </p>
+      </div>
+    </nav>
+    <section id="data" class="container">
+      <div class="canvas-wrapper">
+        <canvas id="resultChart" height="0" width="0"></canvas>
+
+        <div id="preloader">
+          <div id="loader"></div>
+        </div>
+      </div>
+      <form class="form-row">
+        <div class="form-group col-md-6">
+          <label for="wiki">Wiki</label>
+          <input
+            type="text"
+            class="form-control"
+            name="wiki"
+            placeholder="meta.wikimedia.org"
+            autocomplete="off"
+          />
+        </div>
+        <div class="form-group col-md-6">
+          <label for="wiki">Page</label>
+          <input
+            type="text"
+            class="form-control"
+            name="page"
+            placeholder="Full namespace"
+            autocomplete="off"
+          />
+        </div>
+
+        <h2>
+          Results (<span id="total">0</span>)
+          <button type="button" class="btn btn-primary" id="start">
+            Start
+          </button>
+        </h2>
+      </form>
+
+      <table id="results-table" class="table table-striped sortable">
+        <thead>
+          <tr>
+            <!-- <th>#</th> -->
+            <th>Username</th>
+            <th>Home</th>
+            <th>Seniority</th>
+            <th>Advanced rights</th>
+            <th>Edits in last 15 days</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <footer class="container footer">
+      <hr class="featurette-divider" />
+      <div id="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-5">
+              <a href="https://wikimediafoundation.org/wiki/Privacy_policy"
+                >Privacy Policy</a
+              >
+              |
+              <a
+                href="https://wikitech.wikimedia.org/wiki/Wikitech:Labs_Terms_of_use"
+                >Terms of Use</a
+              >
+              |
+              <a
+                href="https://phabricator.wikimedia.org/maniphest/task/create/?projects=trust-and-safety"
+                >Report a bug!</a
+              >
+            </div>
+            <div class="col-md-7">
+              Hosted on
+              <a href="https://wikitech.wikimedia.org/wiki/Portal:Cloud_VPS"
+                >Wikimedia Cloud VPS</a
+              >
+              and written by
+              <a href="https://meta.wikimedia.org/wiki/User:Samuel_(WMF)"
+                >Samuel (WMF)</a
+              >
+              |
+              <a href="http://github.com/samuelguebo/consultation-stats"
+                >Source code
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </footer>
-  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js">
-  </script>
-  <script src="js/stats.js"></script>
-  <script src="js/wiki-repository.js"></script>
-  <script src="js/script.js"></script>
-  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
-  <script src="js/sortable.js"></script>
-</body>
-
+    </footer>
+    <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/wiki-repository.js"></script>
+    <script src="js/script.js"></script>
+    <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script src="js/sortable.js"></script>
+  </body>
 </html>
