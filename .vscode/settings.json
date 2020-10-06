@@ -1,0 +1,18 @@
+{
+  "files.autoSave": "onFocusChange",
+  "git.enabled": true,
+  "editor.formatOnSave": true,
+  "[php]": {
+    "editor.formatOnSave": true,
+  },
+  "[xml]": {
+    "editor.formatOnSave": false,
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.enable": true,
+  "eslint.validate": [
+    "php",
+  ]
+}
