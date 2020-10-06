@@ -207,15 +207,15 @@
     <form class="form-row">
       <div class="form-group col-md-6">
         <label for="wiki">Wiki</label>
-        <input type="text" class="form-control" name="wiki" placeholder="meta.wikimedia.org" autocomplete="off">
+        <input type="text" class="form-control" id="wiki" name="wiki" placeholder="meta.wikimedia.org" autocomplete="off">
       </div>
       <div class="form-group col-md-6">
-        <label for="wiki">Page</label>
-        <input type="text" class="form-control" name="page" placeholder="Full namespace" autocomplete="off">
+        <label for="page">Page</label>
+        <input type="text" class="form-control" id="page" name="page" placeholder="Full namespace" autocomplete="off">
       </div>
 
       <h2>Results (<span id="total">0</span>)
-        <button type="button" class="btn btn-primary" id="start">Start</button>
+        <input type="submit" class="btn btn-primary" id="start" value="Start">
       </h2>
     </form>
 
