@@ -138,7 +138,8 @@ const WikiRepository = {
      * @param {Object} user 
      */
     getUserDetails: async (user) => {
-        let relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
+        const relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
+        const relevantGlobalGroups = ['global-interface-editor', 'global-rollbacker', 'global-sysop', 'ombuds', 'otrs-member'];
         let wiki = document.querySelector('input[name=wiki]').value
         let username = encodeURIComponent(user.username)
         let query_url = "https://" + wiki + "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser="
@@ -158,6 +159,7 @@ const WikiRepository = {
                     user['registration'] = data.query.globaluserinfo.registration
                     user['home'] = data.query.globaluserinfo.home
                     user['rights'] = data.query.globaluserinfo.merged;
+                    user['globalGroups'] = data.query.globaluserinfo.groups;
                     user['editcount'] = data.query.globaluserinfo.editcount;
 
                     // Extract homewiki url
@@ -167,22 +169,34 @@ const WikiRepository = {
 
                     // Pick only homewiki rights that are in relevant user groups
                     user['rights'] = user['rights'].filter(
-                        item => 'groups' in item &&
-                        item.groups.some(r => relevantGroups.includes(r.toLowerCase())) &&
-                        item.wiki === user['home']
+                        item => item.wiki === user['home'] &&
+                        'groups' in item &&
+                        item.groups.some(r => relevantGroups.includes(r.toLowerCase()))
                     );
 
                     // Make sure users have a group and relevant groups
                     user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
 
+                    // Only consider relevant global groups
+                    user['globalGroups'] = user['globalGroups'].filter(
+                        item => relevantGlobalGroups.includes(item)
+                    );
+
                     // sort by edit count
                     user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
 
-                    // Flatten results into comma separated list
+                    // Flatten results
                     user['rights'] = user['rights'].map(item => {
-                        item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
-                        return item['groups'].join(', ')
+                        item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) >= 0)
+                        return item['groups']
                     })
+
+                    // item['groups'] in the above line returns an array.  Faced errors when doing otherwise for fiwiki's User:Stryn
+                    if(Array.isArray(user.rights[0]))
+                        user['rights'] = user['rights'][0]
+
+                    // append global groups and convert to comma separated list
+                    user['rights'] = [...user['rights'], ...user['globalGroups']].join(', ')
 
                     return user
                 }
