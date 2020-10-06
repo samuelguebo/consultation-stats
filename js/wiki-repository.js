@@ -138,7 +138,7 @@ const WikiRepository = {
      * @param {Object} user 
      */
     getUserDetails: async (user) => {
-        let relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
+        const relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
         let wiki = document.querySelector('input[name=wiki]').value
         let username = encodeURIComponent(user.username)
         let query_url = "https://" + wiki + "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser="
@@ -180,7 +180,7 @@ const WikiRepository = {
 
                     // Flatten results into comma separated list
                     user['rights'] = user['rights'].map(item => {
-                        item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) > 0)
+                        item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) >= 0)
                         return item['groups'].join(', ')
                     })
 
