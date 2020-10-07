@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "do": "yarn format && yarn build",
-    "format": "prettier --write \"app/public/*.js\"",
+    "format": "prettier --write \"app/*.js\"",
     "transpile": "tsc",
     "reload": "nodemon -e js,css,html -x \"node app/server\""
   },
