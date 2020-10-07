@@ -14,5 +14,6 @@
     "format",
     "build"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "license": "MIT"
 }
