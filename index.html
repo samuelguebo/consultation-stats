@@ -5,11 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Consultation statistics | Demographic insights about on-wiki discussions</title>
-  <link rel="stylesheet" href="//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
+  <link rel="stylesheet" href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css"
     integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
   <!-- auto complete -->
   <link rel="stylesheet"
-    href="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.min.css">
+    href="https://tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/css/autoComplete.min.css">
 
   <!-- inline css -->
   <style>
@@ -207,15 +207,15 @@
     <form class="form-row">
       <div class="form-group col-md-6">
         <label for="wiki">Wiki</label>
-        <input type="text" class="form-control" name="wiki" placeholder="meta.wikimedia.org" autocomplete="off">
+        <input type="text" class="form-control" id="wiki" name="wiki" placeholder="meta.wikimedia.org" autocomplete="off">
       </div>
       <div class="form-group col-md-6">
-        <label for="wiki">Page</label>
-        <input type="text" class="form-control" name="page" placeholder="Full namespace" autocomplete="off">
+        <label for="page">Page</label>
+        <input type="text" class="form-control" id="page" name="page" placeholder="Full namespace" autocomplete="off">
       </div>
 
       <h2>Results (<span id="total">0</span>)
-        <button type="button" class="btn btn-primary" id="start">Start</button>
+        <input type="submit" class="btn btn-primary" id="start" value="Start">
       </h2>
     </form>
 
@@ -256,12 +256,12 @@
       </div>
     </div>
   </footer>
-  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js">
+  <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/tarekraafat-autocomplete.js/7.2.0/js/autoComplete.min.js">
   </script>
   <script src="js/stats.js"></script>
   <script src="js/wiki-repository.js"></script>
   <script src="js/script.js"></script>
-  <script src="//tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+  <script src="https://tools-static.wmflabs.org/cdnjs/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
   <script src="js/sortable.js"></script>
 </body>
 
