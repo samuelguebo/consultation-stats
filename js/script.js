@@ -34,6 +34,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
 var _this = this;
 var resultChart;
 var list = {
@@ -59,8 +70,45 @@ var collectAllData = function () { return __awaiter(_this, void 0, void 0, funct
 var clearAllData = function () {
     var table = document.getElementById("results-table").querySelector("tbody");
     table.innerHTML = "";
+    var table = document.getElementById("summary-table").querySelector("tbody");
+    table.innerHTML = "";
     var counter = document.querySelectorAll("#data h2 span#total")[0];
     counter.innerText = "0";
+};
+var updateSummary = function () {
+    var table = document.getElementById("summary-table").querySelector("tbody");
+    table.innerHTML = "";
+    var totalUsers = list.usernames.length;
+    var uniqueWikis = Array.from(new Set(list.homewikis)).map(function (item) { return ({
+        label: item,
+    }); });
+    uniqueWikis = uniqueWikis.map(function (_a) {
+        var e_1, _b;
+        var label = _a.label;
+        var count = 0;
+        try {
+            for (var _c = __values(list.homewikis), _d = _c.next(); !_d.done; _d = _c.next()) {
+                var homewiki = _d.value;
+                if (homewiki == label)
+                    count++;
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_d && !_d.done && (_b = _c.return)) _b.call(_c);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return { label: label, count: count };
+    });
+    uniqueWikis.forEach(function (_a) {
+        var label = _a.label, count = _a.count;
+        var row = document.createElement("tr");
+        var percent = ((count * 100) / totalUsers).toFixed(2) + "%";
+        row.innerHTML = "<td>" + label + "</td><td>" + percent + "</td>";
+        table.append(row);
+    });
 };
 var updateUI = function (user) {
     document.querySelector("#preloader").style.display = "none";

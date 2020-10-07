@@ -108,6 +108,7 @@ const WikiRepository = {
 
                     // Refresh chart
                     Stats.displayChart(list.homewikis);
+                    updateSummary();
                   }
                 }
               })

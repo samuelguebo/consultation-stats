@@ -160,6 +160,7 @@ var WikiRepository = {
                                                         list.usernames.push(user.username);
                                                         list.homewikis.push(user.home);
                                                         Stats.displayChart(list.homewikis);
+                                                        updateSummary();
                                                     }
                                                     _c.label = 2;
                                                 case 2: return [2];

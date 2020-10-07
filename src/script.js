@@ -29,10 +29,31 @@ const collectAllData = async () => {
 const clearAllData = () => {
   let table = document.getElementById("results-table").querySelector("tbody");
   table.innerHTML = "";
+  let table = document.getElementById("summary-table").querySelector("tbody");
+  table.innerHTML = "";
   let counter = document.querySelectorAll("#data h2 span#total")[0];
   counter.innerText = "0";
 };
 
+const updateSummary = () => {
+  const table = document.getElementById("summary-table").querySelector("tbody");
+  table.innerHTML = "";
+  const totalUsers = list.usernames.length;
+  const uniqueWikis = Array.from(new Set(list.homewikis)).map((item) => ({
+    label: item,
+  }));
+  uniqueWikis = uniqueWikis.map(({ label }) => {
+    let count = 0;
+    for (const homewiki of list.homewikis) if (homewiki == label) count++;
+    return { label, count };
+  });
+  uniqueWikis.forEach(({ label, count }) => {
+    const row = document.createElement("tr");
+    const percent = ((count * 100) / totalUsers).toFixed(2) + "%";
+    row.innerHTML = `<td>${label}</td><td>${percent}</td>`;
+    table.append(row);
+  });
+};
 /**
  * Update the user interface by adding new users
  * to the table with their relevant details
