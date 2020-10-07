@@ -10,7 +10,8 @@
     "do": "yarn format && yarn build",
     "format": "prettier --write \"app/*.js\"",
     "transpile": "tsc",
-    "reload": "nodemon -e js,css,html -x \"node app/server\""
+    "reload": "nodemon -e js,css,html -x \"node app/server\"",
+    "start": "node app/server"
   },
   "pre-commit": [
     "format",
