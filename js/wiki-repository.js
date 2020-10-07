@@ -231,9 +231,10 @@ var WikiRepository = {
                         user["rights"] = data.query.globaluserinfo.merged;
                         user["globalGroups"] = data.query.globaluserinfo.groups;
                         user["editcount"] = data.query.globaluserinfo.editcount;
+                        var currentwiki_1 = wiki.replace(".org", "").replace(".", "");
                         user["homeurl"] = user["rights"].filter(function (item) { return item.wiki === user["home"]; })[0]["url"];
                         user["rights"] = user["rights"].filter(function (item) {
-                            return item.wiki === user["home"] &&
+                            return item.wiki === currentwiki_1 &&
                                 "groups" in item &&
                                 item.groups.some(function (r) { return relevantGroups.includes(r.toLowerCase()); });
                         });

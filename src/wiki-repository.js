@@ -179,16 +179,17 @@ const WikiRepository = {
           user["rights"] = data.query.globaluserinfo.merged;
           user["globalGroups"] = data.query.globaluserinfo.groups;
           user["editcount"] = data.query.globaluserinfo.editcount;
+          const currentwiki = wiki.replace(".org", "").replace(".", "");
 
           // Extract homewiki url
           user["homeurl"] = user["rights"].filter(
             (item) => item.wiki === user["home"]
           )[0]["url"];
 
-          // Pick only homewiki rights that are in relevant user groups
+          // Pick only current wiki rights that are in relevant user groups
           user["rights"] = user["rights"].filter(
             (item) =>
-              item.wiki === user["home"] &&
+              item.wiki === currentwiki &&
               "groups" in item &&
               item.groups.some((r) => relevantGroups.includes(r.toLowerCase()))
           );
