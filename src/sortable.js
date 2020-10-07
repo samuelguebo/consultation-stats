@@ -86,7 +86,10 @@ sorttable = {
         if (mtch && typeof sorttable["sort_" + override] == "function") {
           headrow[i].sorttable_sortfunction = sorttable["sort_" + override];
         } else {
-          headrow[i].sorttable_sortfunction = sorttable.guessType(table, i);
+          headrow[i].sorttable_sortfunction = sorttable.customGuessType(
+            table,
+            i
+          );
         }
         // make it clickable to sort
         headrow[i].sorttable_columnindex = i;
@@ -188,7 +191,24 @@ sorttable = {
       }
     }
   },
-
+  customGuessType: function (table, column) {
+    const { id } = table;
+    let sortfn = undefined;
+    const numericSort = (AA, BB) => {
+      const A = AA[0];
+      const B = BB[0];
+      let a = +A || 0;
+      let b = +B || 0;
+      if (A == "+50") a = 51;
+      if (B == "+50") b = 51;
+      return a - b;
+    };
+    if (id == "results-table") {
+      if (column == 2 || column == 4) sortfn = numericSort;
+    }
+    if (id == "summary-table" && column == 1) sortfn = numericSort;
+    return sortfn;
+  },
   guessType: function (table, column) {
     // guess the type of a column based on its first non-blank row
     sortfn = sorttable.sort_alpha;

@@ -102,11 +102,12 @@ var updateSummary = function () {
         }
         return { label: label, count: count };
     });
+    uniqueWikis.sort(function (A, B) { return B.count - A.count; });
     uniqueWikis.forEach(function (_a) {
         var label = _a.label, count = _a.count;
         var row = document.createElement("tr");
-        var percent = ((count * 100) / totalUsers).toFixed(2) + "%";
-        row.innerHTML = "<td>" + label + "</td><td>" + percent + "</td>";
+        var percent = ((count * 100) / totalUsers).toFixed(2);
+        row.innerHTML = "<td>" + label + "</td><td class=\"percent\">" + percent + "</td>";
         table.append(row);
     });
 };

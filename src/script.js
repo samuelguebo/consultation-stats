@@ -47,10 +47,11 @@ const updateSummary = () => {
     for (const homewiki of list.homewikis) if (homewiki == label) count++;
     return { label, count };
   });
+  uniqueWikis.sort((A, B) => B.count - A.count); // Highest to lowest
   uniqueWikis.forEach(({ label, count }) => {
     const row = document.createElement("tr");
-    const percent = ((count * 100) / totalUsers).toFixed(2) + "%";
-    row.innerHTML = `<td>${label}</td><td>${percent}</td>`;
+    const percent = ((count * 100) / totalUsers).toFixed(2);
+    row.innerHTML = `<td>${label}</td><td class="percent">${percent}</td>`;
     table.append(row);
   });
 };

@@ -52,7 +52,7 @@ sorttable = {
                     headrow[i].sorttable_sortfunction = sorttable["sort_" + override];
                 }
                 else {
-                    headrow[i].sorttable_sortfunction = sorttable.guessType(table, i);
+                    headrow[i].sorttable_sortfunction = sorttable.customGuessType(table, i);
                 }
                 headrow[i].sorttable_columnindex = i;
                 headrow[i].sorttable_tbody = table.tBodies[0];
@@ -121,6 +121,28 @@ sorttable = {
                 }));
             }
         }
+    },
+    customGuessType: function (table, column) {
+        var id = table.id;
+        var sortfn = undefined;
+        var numericSort = function (AA, BB) {
+            var A = AA[0];
+            var B = BB[0];
+            var a = +A || 0;
+            var b = +B || 0;
+            if (A == "+50")
+                a = 51;
+            if (B == "+50")
+                b = 51;
+            return a - b;
+        };
+        if (id == "results-table") {
+            if (column == 2 || column == 4)
+                sortfn = numericSort;
+        }
+        if (id == "summary-table" && column == 1)
+            sortfn = numericSort;
+        return sortfn;
     },
     guessType: function (table, column) {
         sortfn = sorttable.sort_alpha;

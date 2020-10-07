@@ -193,6 +193,10 @@
           transform: rotate(360deg);
         }
       }
+
+      .percent::after {
+        content: "%";
+      }
     </style>
   </head>
 
@@ -248,6 +252,7 @@
         </h2>
       </form>
 
+      <!-- NOTE: if you change the order of columns, please update sorttable's customGuessType, which relies on this order. -->
       <table id="results-table" class="table table-striped sortable">
         <thead>
           <tr>
@@ -261,6 +266,7 @@
         </thead>
         <tbody></tbody>
       </table>
+      <!-- NOTE: if you change the order of columns, please update sorttable's customGuessType, which relies on this order. -->
       <table id="summary-table" class="table table-striped sortable">
         <thead>
           <tr>
