@@ -6,6 +6,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "do": "yarn format && yarn build",
     "format": "prettier --write \"src/*.js\"",
     "transpile": "tsc"
   },
