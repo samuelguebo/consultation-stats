@@ -1,270 +1,322 @@
-const WikiRepository = {
-
-    /**
-     * Collect list of all wikis obtained
-     * through Special:SiteMatrix
-     */
-    getWikis: () => {
-        if (typeof (window.wikis) === "undefined") {
-
-            let apiURI = 'https://meta.wikimedia.org/w/api.php?action=sitematrix&smlangprop=site&smsiteprop=url&format=json&origin=*'
-
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
+var _this = this;
+var WikiRepository = {
+    getWikis: function () {
+        if (typeof window.wikis === "undefined") {
+            var apiURI = "https://meta.wikimedia.org/w/api.php?action=sitematrix&smlangprop=site&smsiteprop=url&format=json&origin=*";
             return fetch(apiURI)
-                .then(response => response.json())
-                .then(data => {
-
-                    // flatten arrays
-                    let specials = data.sitematrix.specials
-                    specials = specials.map(a => a.url.replace('https://', ''))
-
-                    // remove key 'count' and 'specials'
-                    delete data.sitematrix.count
-                    delete data.sitematrix.specials
-
-                    data = Object.values(data.sitematrix)
-
-                    data = data.reduce((a, b) => a.concat(b.site), []);
-                    data = data.map((wiki) => wiki.url.replace('https://', ''))
-                    window.wikis = data.concat(specials)
-                    return window.wikis
-                }).catch(e => {})
-
-        } else {
-            return Promise.resolve(window.wikis)
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                var specials = data.sitematrix.specials;
+                specials = specials.map(function (a) { return a.url.replace("https://", ""); });
+                delete data.sitematrix.count;
+                delete data.sitematrix.specials;
+                data = Object.values(data.sitematrix);
+                data = data.reduce(function (a, b) { return a.concat(b.site); }, []);
+                data = data.map(function (wiki) { return wiki.url.replace("https://", ""); });
+                window.wikis = data.concat(specials);
+                return window.wikis;
+            })
+                .catch(function (e) { });
+        }
+        else {
+            return Promise.resolve(window.wikis);
         }
     },
-
-    /**
-     * Obtain list of all edits from a page and 
-     * isolate all single accounts who edited it.
-     * Bypass the 500 limit using recursivity
-     */
-    getUsers: async (limit = 500, data) => {
-        let query_url = '';
-        let users;
-        let wiki = document.querySelector('input[name=wiki]').value
-        let page = document.querySelector('input[name=page]').value
-        const userNumberLimit = 1000 // Arbitrary limit for saving resources
-
-        page = encodeURIComponent(page);
-        if (wiki !== '' && page !== '') {
-            if (typeof data !== 'undefined' &&
-                typeof data.continue.rvcontinue !== 'undefined') {
-
-                // If a "rvcontinue" parameters exits, build URI differently
-                query_url = `https://${wiki}/w/api.php?action=query&prop=revisions`
-                query_url += `&titles=${page}&formatversion=2&redirects=1&format=json`;
-                query_url += `&rvlimit=${limit}&origin=*`;
-                query_url += `&rvcontinue=${data.continue.rvcontinue}`;
-
-            } else {
-                query_url = `https://${wiki}/w/api.php?action=query&prop=revisions`
-                query_url += `&titles=${page}&formatversion=2&redirects=1&format=json`;
-                query_url += `&rvlimit=${limit}&origin=*`;
-
-                // display stats chart with empty data the first time
-                Stats.displayChart([])
-            }
-
-            // Get edits and extract users
-            try {
-
-
-                let res = await fetch(query_url);
-                data = await res.json();
-
-                let results = data.query.pages[0].revisions;
-                let title = data.query.pages[0].title;
-
-                if (typeof users === 'undefined' || usernames === 'undefined') {
-                    users = []
-                    usernames = []
-                }
-
-                // Loop through users and populate UI
-                for (let user of results) {
-                    user = {
-                        timestamp: user['timestamp'],
-                        username: user['user'],
-                        revid: user['revid'],
-                        page: title,
-                    }
-
-                    // Avoid dupicates by keeping track of table list
-                    if (usernames.indexOf(user.username) < 0) {
-                        usernames.push(user.username);
-
-                        // Collect additional details about contributor
-                        WikiRepository.getUserDetails(user).then(async user => {
-                            if (typeof user !== 'undefined' && user !== null) {
-                                // Add recent edits
-                                user['recentedits'] = await WikiRepository.getRecentEdits(user.username, user.homeurl)
-
-                                // Discard duplicates
-                                if (list.usernames.indexOf(user.username) < 0) {
-                                    updateUI(user)
-                                    list.usernames.push(user.username)
-                                    list.homewikis.push(user.home)
-
-                                    // Refresh chart
-                                    Stats.displayChart(list.homewikis)
+    getUsers: function (limit, data) {
+        if (limit === void 0) { limit = 500; }
+        return __awaiter(_this, void 0, void 0, function () {
+            var query_url, users, wiki, page, userNumberLimit, res, results, title, results_1, results_1_1, user, e_1;
+            var e_2, _a;
+            var _this = this;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        query_url = "";
+                        wiki = document.querySelector("input[name=wiki]").value;
+                        page = document.querySelector("input[name=page]").value;
+                        userNumberLimit = 1000;
+                        page = encodeURIComponent(page);
+                        if (!(wiki !== "" && page !== "")) return [3, 7];
+                        if (typeof data !== "undefined" &&
+                            typeof data.continue.rvcontinue !== "undefined") {
+                            query_url = "https://" + wiki + "/w/api.php?action=query&prop=revisions";
+                            query_url += "&titles=" + page + "&formatversion=2&redirects=1&format=json";
+                            query_url += "&rvlimit=" + limit + "&origin=*";
+                            query_url += "&rvcontinue=" + data.continue.rvcontinue;
+                        }
+                        else {
+                            query_url = "https://" + wiki + "/w/api.php?action=query&prop=revisions";
+                            query_url += "&titles=" + page + "&formatversion=2&redirects=1&format=json";
+                            query_url += "&rvlimit=" + limit + "&origin=*";
+                            Stats.displayChart([]);
+                        }
+                        _b.label = 1;
+                    case 1:
+                        _b.trys.push([1, 6, , 7]);
+                        return [4, fetch(query_url)];
+                    case 2:
+                        res = _b.sent();
+                        return [4, res.json()];
+                    case 3:
+                        data = _b.sent();
+                        results = data.query.pages[0].revisions;
+                        title = data.query.pages[0].title;
+                        if (typeof users === "undefined" || usernames === "undefined") {
+                            users = [];
+                            usernames = [];
+                        }
+                        try {
+                            for (results_1 = __values(results), results_1_1 = results_1.next(); !results_1_1.done; results_1_1 = results_1.next()) {
+                                user = results_1_1.value;
+                                user = {
+                                    timestamp: user["timestamp"],
+                                    username: user["user"],
+                                    revid: user["revid"],
+                                    page: title,
+                                };
+                                if (usernames.indexOf(user.username) < 0) {
+                                    usernames.push(user.username);
+                                    WikiRepository.getUserDetails(user)
+                                        .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
+                                        var _a, _b;
+                                        return __generator(this, function (_c) {
+                                            switch (_c.label) {
+                                                case 0:
+                                                    if (!(typeof user !== "undefined" && user !== null)) return [3, 2];
+                                                    _a = user;
+                                                    _b = "recentedits";
+                                                    return [4, WikiRepository.getRecentEdits(user.username, user.homeurl)];
+                                                case 1:
+                                                    _a[_b] = _c.sent();
+                                                    if (list.usernames.indexOf(user.username) < 0) {
+                                                        updateUI(user);
+                                                        list.usernames.push(user.username);
+                                                        list.homewikis.push(user.home);
+                                                        Stats.displayChart(list.homewikis);
+                                                        updateSummary();
+                                                    }
+                                                    _c.label = 2;
+                                                case 2: return [2];
+                                            }
+                                        });
+                                    }); })
+                                        .catch(function (e) { });
                                 }
                             }
-                        }).catch(e => {})
+                        }
+                        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+                        finally {
+                            try {
+                                if (results_1_1 && !results_1_1.done && (_a = results_1.return)) _a.call(results_1);
+                            }
+                            finally { if (e_2) throw e_2.error; }
+                        }
+                        if (!(!data.hasOwnProperty("batchcomplete") &&
+                            list.usernames.length <= userNumberLimit)) return [3, 5];
+                        return [4, WikiRepository.getUsers(limit, data)];
+                    case 4:
+                        _b.sent();
+                        _b.label = 5;
+                    case 5: return [2, list.usernames];
+                    case 6:
+                        e_1 = _b.sent();
+                        return [3, 7];
+                    case 7: return [2, []];
+                }
+            });
+        });
+    },
+    getUserDetails: function (user) { return __awaiter(_this, void 0, void 0, function () {
+        var relevantGroups, relevantGlobalGroups, wiki, username, query_url;
+        return __generator(this, function (_a) {
+            relevantGroups = [
+                "rollbacker",
+                "sysop",
+                "checkuser",
+                "oversighter",
+                "otrs members",
+                "stewards",
+                "staff",
+            ];
+            relevantGlobalGroups = [
+                "global-interface-editor",
+                "global-rollbacker",
+                "global-sysop",
+                "ombuds",
+                "otrs-member",
+            ];
+            wiki = document.querySelector("input[name=wiki]").value;
+            username = encodeURIComponent(user.username);
+            query_url = "https://" +
+                wiki +
+                "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser=";
+            query_url += username + "&origin=*";
+            query_url += "&guiprop=groups|editcount|merged";
+            return [2, fetch(query_url)
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                    if (data.hasOwnProperty("error")) {
+                        return null;
                     }
-
-                }
-
-                // limit number of results to process, for saving resources
-                if (!data.hasOwnProperty('batchcomplete') &&
-                    list.usernames.length <= userNumberLimit) {
-                    // continue to process batch otherwise return users
-                    await WikiRepository.getUsers(limit, data);
-                }
-
-                return list.usernames;
-            } catch (e) {
-                // fails silently
+                    if (data.query.hasOwnProperty("globaluserinfo")) {
+                        user["registration"] = data.query.globaluserinfo.registration;
+                        user["home"] = data.query.globaluserinfo.home;
+                        user["rights"] = data.query.globaluserinfo.merged;
+                        user["globalGroups"] = data.query.globaluserinfo.groups;
+                        user["editcount"] = data.query.globaluserinfo.editcount;
+                        user["homeurl"] = user["rights"].filter(function (item) { return item.wiki === user["home"]; })[0]["url"];
+                        user["rights"] = user["rights"].filter(function (item) {
+                            return item.wiki === user["home"] &&
+                                "groups" in item &&
+                                item.groups.some(function (r) { return relevantGroups.includes(r.toLowerCase()); });
+                        });
+                        user["rights"] = user["rights"].filter(function (items) {
+                            return "groups" in items &&
+                                items.groups.some(function (r) { return relevantGroups.includes(r.toLowerCase()); });
+                        });
+                        user["globalGroups"] = user["globalGroups"].filter(function (item) {
+                            return relevantGlobalGroups.includes(item);
+                        });
+                        user["rights"] = user["rights"].sort(function (b, a) { return a.editcount >= b.editcount; });
+                        user["rights"] = user["rights"].map(function (item) {
+                            item["groups"] = item["groups"].filter(function (i) { return relevantGroups.indexOf(i) >= 0; });
+                            return item["groups"];
+                        });
+                        if (Array.isArray(user.rights[0]))
+                            user["rights"] = user["rights"][0];
+                        user["rights"] = __spread(user["rights"], user["globalGroups"]).join(", ");
+                        return user;
+                    }
+                })
+                    .catch(function (e) {
+                    return null;
+                })];
+        });
+    }); },
+    getPages: function (pageInputContainer, wikiInputContainer) { return __awaiter(_this, void 0, void 0, function () {
+        var pageInput, wikiInput, query_url;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    pageInput = document.querySelector(pageInputContainer);
+                    wikiInput = document.querySelector(wikiInputContainer);
+                    if (typeof wikiInput === "indefined" || wikiInput.value === "") {
+                        console.log("empty value");
+                        return [2, Promise.resolve([])];
+                    }
+                    query_url = "https://" + wikiInput.value + "/w/api.php?action=query&list=search";
+                    query_url += "&srsearch=" + pageInput.value + "&srnamespace=*";
+                    query_url += "&format=json&origin=*";
+                    return [4, fetch(query_url)
+                            .then(function (res) { return res.json(); })
+                            .then(function (data) {
+                            var result = data.query.search.reduce(function (a, b) { return a.concat(b.title); }, []);
+                            return result;
+                        })
+                            .catch(function (error) {
+                            return [];
+                        })];
+                case 1:
+                    source = _a.sent();
+                    return [2, source];
             }
-
-        }
-
-        return [];
-    },
-    /**
-     * Get details including home project
-     * for specific user
-     * 
-     * @param {Object} user 
-     */
-    getUserDetails: async (user) => {
-        const relevantGroups = ['rollbacker', 'sysop', 'checkuser', 'oversighter', 'otrs members', 'stewards', 'staff'];
-        const relevantGlobalGroups = ['global-interface-editor', 'global-rollbacker', 'global-sysop', 'ombuds', 'otrs-member'];
-        let wiki = document.querySelector('input[name=wiki]').value
-        let username = encodeURIComponent(user.username)
-        let query_url = "https://" + wiki + "/w/api.php?action=query&meta=globaluserinfo&format=json&guiuser="
-        query_url += username + "&origin=*"
-        query_url += '&guiprop=groups|editcount|merged'
-
-        return fetch(query_url)
-            .then(res => res.json())
-            .then(data => {
-                if (data.hasOwnProperty('error')) {
-                    return null
-                }
-
-                // return empty detail on error
-                if (data.query.hasOwnProperty('globaluserinfo')) {
-
-                    user['registration'] = data.query.globaluserinfo.registration
-                    user['home'] = data.query.globaluserinfo.home
-                    user['rights'] = data.query.globaluserinfo.merged;
-                    user['globalGroups'] = data.query.globaluserinfo.groups;
-                    user['editcount'] = data.query.globaluserinfo.editcount;
-
-                    // Extract homewiki url
-                    user['homeurl'] = user['rights'].filter(
-                        item => item.wiki === user['home']
-                    )[0]['url'];
-
-                    // Pick only homewiki rights that are in relevant user groups
-                    user['rights'] = user['rights'].filter(
-                        item => item.wiki === user['home'] &&
-                        'groups' in item &&
-                        item.groups.some(r => relevantGroups.includes(r.toLowerCase()))
-                    );
-
-                    // Make sure users have a group and relevant groups
-                    user['rights'] = user['rights'].filter(items => 'groups' in items && items.groups.some(r => relevantGroups.includes(r.toLowerCase())));
-
-                    // Only consider relevant global groups
-                    user['globalGroups'] = user['globalGroups'].filter(
-                        item => relevantGlobalGroups.includes(item)
-                    );
-
-                    // sort by edit count
-                    user['rights'] = user['rights'].sort((b, a) => a.editcount >= b.editcount);
-
-                    // Flatten results
-                    user['rights'] = user['rights'].map(item => {
-                        item['groups'] = item['groups'].filter(i => relevantGroups.indexOf(i) >= 0)
-                        return item['groups']
-                    })
-
-                    // item['groups'] in the above line returns an array.  Faced errors when doing otherwise for fiwiki's User:Stryn
-                    if(Array.isArray(user.rights[0]))
-                        user['rights'] = user['rights'][0]
-
-                    // append global groups and convert to comma separated list
-                    user['rights'] = [...user['rights'], ...user['globalGroups']].join(', ')
-
-                    return user
-                }
-            }).catch(e => {
-                // console.log(`error: ${error}`)
-                return null
-            })
-    },
-
-    /**
-     * Search and get pages that match certain 
-     * keywords
-     */
-    getPages: async (pageInputContainer, wikiInputContainer) => {
-
-        let pageInput = document.querySelector(pageInputContainer)
-        let wikiInput = document.querySelector(wikiInputContainer)
-        if (typeof wikiInput === 'indefined' || wikiInput.value === '') {
-            console.log('empty value')
-            return Promise.resolve([]) // empty array
-        }
-
-        let query_url = "https://" + wikiInput.value + "/w/api.php?action=query&list=search"
-        query_url += "&srsearch=" + pageInput.value + "&srnamespace=*"
-        query_url += "&format=json&origin=*"
-
-        source = await fetch(query_url)
-            .then(res => res.json())
-            .then(data => {
-                // console.log(data)
-                let result = data.query.search.reduce((a, b) => a.concat(b.title), []);
-                return result;
-            }).catch(error => {
-                // console.log(`error: ${error}`)
-                return []
-            })
-
-        return source
-    },
-
-    /**
-     * Indicate whether user account was blocked
-     * over a certain recent period
-     */
-    getRecentBlocks: async () => {
-        // TODO: Implement the feature if needed
-        // https://fr.wikipedia.org/w/api.php?action=query&list=blocks&bkusers=<USERNAME>&format=json
-
-
-    },
-
-    /**
-     * List edits performed by a user
-     * over a certain recent period
-     */
-    getRecentEdits: async (username, homewikiURI) => {
-        let lastMonth = new Date()
-        lastMonth.setDate(lastMonth.getDate() - 15)
-        lastMonth = lastMonth.toISOString()
-
-        let apiURI = homewikiURI + '/w/api.php?action=query&list=usercontribs'
-        apiURI += '&uclimit=50&ucend=' + lastMonth + '&ucuser=' + username + '&format=json&origin=*'
-
-        res = await fetch(apiURI)
-            .then(data => data.json())
-            .then(recentEdits => recentEdits.query.usercontribs)
-            .catch()
-
-        return res
-    }
-}
+        });
+    }); },
+    getRecentBlocks: function () { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2];
+        });
+    }); },
+    getRecentEdits: function (username, homewikiURI) { return __awaiter(_this, void 0, void 0, function () {
+        var lastMonth, apiURI;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    lastMonth = new Date();
+                    lastMonth.setDate(lastMonth.getDate() - 15);
+                    lastMonth = lastMonth.toISOString();
+                    apiURI = homewikiURI + "/w/api.php?action=query&list=usercontribs";
+                    apiURI +=
+                        "&uclimit=50&ucend=" +
+                            lastMonth +
+                            "&ucuser=" +
+                            username +
+                            "&format=json&origin=*";
+                    return [4, fetch(apiURI)
+                            .then(function (data) { return data.json(); })
+                            .then(function (recentEdits) { return recentEdits.query.usercontribs; })
+                            .catch()];
+                case 1:
+                    res = _a.sent();
+                    return [2, res];
+            }
+        });
+    }); },
+};
