@@ -1,4 +1,5 @@
 {
+  "main": "app/server.js",
   "devDependencies": {
     "pre-commit": "^1.2.2",
     "prettier": "^2.1.2",
@@ -7,13 +8,19 @@
   "scripts": {
     "build": "tsc",
     "do": "yarn format && yarn build",
-    "format": "prettier --write \"src/*.js\"",
-    "transpile": "tsc"
+    "format": "prettier --write \"app/*.js\"",
+    "transpile": "tsc",
+    "reload": "nodemon -e js,css,html -x \"node app/server\"",
+    "start": "node app/server"
   },
   "pre-commit": [
     "format",
     "build"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "request": "^2.88.2"
+  },
   "license": "MIT"
 }
