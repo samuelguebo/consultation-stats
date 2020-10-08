@@ -17,7 +17,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-    "include": [
-        "./app/utils/*"
-    ]
+  "include": [
+    "./app/utils/*"
+  ]
 }
