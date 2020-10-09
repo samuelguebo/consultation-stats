@@ -20,8 +20,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "mysql": "^2.18.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "validator": "^13.1.17"
   },
   "license": "MIT"
 }
-
