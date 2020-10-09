@@ -15,6 +15,9 @@ git clone https://github.com/samuelguebo/consultation-stats
 
 # install dependencies
 yarn install
+
+# build and render frontend js
+yarn build
 ```
 ## Configure
 Database configuration such as server port or user credentials should be set in `app/setting.js`
