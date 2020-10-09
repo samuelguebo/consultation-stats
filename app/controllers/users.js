@@ -4,6 +4,13 @@ const settings = require("../settings");
 const validator = require("validator");
 const router = express.Router();
 
+/**
+ * Method matching route /users/wikiDb/pageId
+ * It users a SQL query and fetched data
+ * from replicas.
+ *
+ * @return {Response} Json response
+ */
 router.get("/users/:wikiDb/:pageId", function (req, res) {
   try {
     let wikiDb = req.params.wikiDb;
@@ -41,9 +48,9 @@ router.get("/users/:wikiDb/:pageId", function (req, res) {
       LEFT JOIN actor a on r.rev_actor = a.actor_id
       WHERE p.page_id = ? LIMIT 3;
       `
-        .replace(/(\r\n|\n|\r)/gm, "")
-        .replace(/\s+/g, " ")
-        .trim();
+        .replace(/(\r\n|\n|\r)/gm, "") // remove line breaks
+        .replace(/\s+/g, " ") // get rid of superflous spaces
+        .trim(); // no space before or at the end
 
       con.query(sqlQuery, [pageId], function (error, result, fields) {
         if (error) throw error;
