@@ -36,25 +36,34 @@ router.get("/users/:wikiDb/:pageId", function (req, res) {
     });
 
     con.connect(function (error) {
-      let sqlQuery = `
-      SELECT DISTINCT a.actor_name,
-      ( select count(*) from revision_userindex r
-      where r.rev_actor = a.actor_id
-      and r.rev_timestamp > (now() - INTERVAL 15 DAY + 0)
-      ) as total, p.page_id
+      let sqlQuery = ` 
+      SELECT gu_name, gu_home_db, gu_registration, gug_group,
+      ( SELECT count(*) from revision_userindex
+          WHERE rev_actor = actor_id
+          AND rev_timestamp > (now() - INTERVAL 15 DAY + 0)
+      ) AS total
+      FROM centralauth_p.global_user_groups
+      LEFT JOIN centralauth_p.globaluser ON gug_user = gu_id 
+      LEFT JOIN actor on actor_name = gu_name
 
-      FROM revision_userindex r
-      LEFT JOIN page p ON r.rev_page = p.page_id
-      LEFT JOIN actor a on r.rev_actor = a.actor_id
-      WHERE p.page_id = ? LIMIT 3;
+      WHERE gu_name in (
+          SELECT DISTINCT actor_name
+          FROM revision_userindex
+          WHERE rev_page = ?
+      );
       `
         .replace(/(\r\n|\n|\r)/gm, "") // remove line breaks
         .replace(/\s+/g, " ") // get rid of superflous spaces
         .trim(); // no space before or at the end
 
-      con.query(sqlQuery, [pageId], function (error, result, fields) {
+      con.query(sqlQuery, [pageId], function (error, results, fields) {
         if (error) throw error;
-        res.send(result);
+        //res.send(results);
+
+        res.setHeader("x-cache-timeout", "6 hours");
+        res.send({
+          results: results,
+        });
       });
     });
     //res.send([wiki, pageId])
