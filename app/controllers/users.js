@@ -37,7 +37,7 @@ router.get("/users/:wikiDb/:pageId", function (req, res) {
 
     con.connect(function (error) {
       let sqlQuery = ` 
-      SELECT gu_name, gu_name, gu_home_db, gu_registration, gug_group,
+      SELECT gu_name, gu_home_db, gu_registration, gug_group,
       ( SELECT count(*) from revision_userindex
           WHERE rev_actor = actor_id
           AND rev_timestamp > (now() - INTERVAL 15 DAY + 0)
@@ -57,13 +57,13 @@ router.get("/users/:wikiDb/:pageId", function (req, res) {
         .trim(); // no space before or at the end
 
       con.query(sqlQuery, [pageId], function (error, results, fields) {
-
         if (error) throw error;
         //res.send(results);
 
+        res.setHeader("x-cache-timeout", "6 hours");
         res.send({
-          "results": results
-        })
+          results: results,
+        });
       });
     });
     //res.send([wiki, pageId])
