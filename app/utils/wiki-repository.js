@@ -175,8 +175,11 @@ const WikiRepository = {
         // return empty detail on error
         if (data.query.hasOwnProperty("globaluserinfo")) {
           user["registration"] = data.query.globaluserinfo.registration;
-          user["home"] = data.query.globaluserinfo.home;
           user["rights"] = data.query.globaluserinfo.merged;
+          user["home"] = user["rights"].reduce(
+            (acc, cur) => acc.editcount < cur.editcount ? cur : acc,
+            {editcount: 0}
+          ).wiki;
           user["globalGroups"] = data.query.globaluserinfo.groups;
           user["editcount"] = data.query.globaluserinfo.editcount;
           const currentwiki = wiki.replace(".org", "").replace(".", "");
