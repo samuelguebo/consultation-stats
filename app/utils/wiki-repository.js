@@ -182,7 +182,6 @@ const WikiRepository = {
           ).wiki;
           user["globalGroups"] = data.query.globaluserinfo.groups;
           user["editcount"] = data.query.globaluserinfo.editcount;
-          const currentwiki = wiki.replace(".org", "").replace(".", "");
 
           // Extract homewiki url
           user["homeurl"] = user["rights"].filter(
@@ -192,16 +191,9 @@ const WikiRepository = {
           // Pick only current wiki rights that are in relevant user groups
           user["rights"] = user["rights"].filter(
             (item) =>
-              item.wiki === currentwiki &&
+            new URL(item.url).host === wiki &&
               "groups" in item &&
               item.groups.some((r) => relevantGroups.includes(r.toLowerCase()))
-          );
-
-          // Make sure users have a group and relevant groups
-          user["rights"] = user["rights"].filter(
-            (items) =>
-              "groups" in items &&
-              items.groups.some((r) => relevantGroups.includes(r.toLowerCase()))
           );
 
           // Only consider relevant global groups
