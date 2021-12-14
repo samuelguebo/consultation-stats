@@ -233,7 +233,7 @@ var WikiRepository = {
                     if (data.query.hasOwnProperty("globaluserinfo")) {
                         user["registration"] = data.query.globaluserinfo.registration;
                         user["rights"] = data.query.globaluserinfo.merged;
-                        user["home"] = user["rights"].reduce(function (acc, cur) { return acc.editcount < cur.editcount ? cur : acc; }, { editcount: 0 }).wiki;
+                        user["home"] = user["rights"].reduce(function (acc, cur) { return (acc.editcount < cur.editcount ? cur : acc); }, { editcount: 0 }).wiki;
                         user["globalGroups"] = data.query.globaluserinfo.groups;
                         user["editcount"] = data.query.globaluserinfo.editcount;
                         user["homeurl"] = user["rights"].filter(function (item) { return item.wiki === user["home"]; })[0]["url"];
