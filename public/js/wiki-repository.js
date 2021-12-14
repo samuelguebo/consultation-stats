@@ -61,9 +61,14 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
 };
 var _this = this;
 var WikiRepository = {
@@ -106,15 +111,15 @@ var WikiRepository = {
                         if (!(wiki !== "" && page !== "")) return [3, 7];
                         if (typeof data !== "undefined" &&
                             typeof data.continue.rvcontinue !== "undefined") {
-                            query_url = "https://" + wiki + "/w/api.php?action=query&prop=revisions";
-                            query_url += "&titles=" + page + "&formatversion=2&redirects=1&format=json";
-                            query_url += "&rvlimit=" + limit + "&origin=*";
-                            query_url += "&rvcontinue=" + data.continue.rvcontinue;
+                            query_url = "https://".concat(wiki, "/w/api.php?action=query&prop=revisions");
+                            query_url += "&titles=".concat(page, "&formatversion=2&redirects=1&format=json");
+                            query_url += "&rvlimit=".concat(limit, "&origin=*");
+                            query_url += "&rvcontinue=".concat(data.continue.rvcontinue);
                         }
                         else {
-                            query_url = "https://" + wiki + "/w/api.php?action=query&prop=revisions";
-                            query_url += "&titles=" + page + "&formatversion=2&redirects=1&format=json";
-                            query_url += "&rvlimit=" + limit + "&origin=*";
+                            query_url = "https://".concat(wiki, "/w/api.php?action=query&prop=revisions");
+                            query_url += "&titles=".concat(page, "&formatversion=2&redirects=1&format=json");
+                            query_url += "&rvlimit=".concat(limit, "&origin=*");
                             Stats.displayChart([]);
                         }
                         _b.label = 1;
@@ -227,20 +232,15 @@ var WikiRepository = {
                     }
                     if (data.query.hasOwnProperty("globaluserinfo")) {
                         user["registration"] = data.query.globaluserinfo.registration;
-                        user["home"] = data.query.globaluserinfo.home;
                         user["rights"] = data.query.globaluserinfo.merged;
+                        user["home"] = user["rights"].reduce(function (acc, cur) { return acc.editcount < cur.editcount ? cur : acc; }, { editcount: 0 }).wiki;
                         user["globalGroups"] = data.query.globaluserinfo.groups;
                         user["editcount"] = data.query.globaluserinfo.editcount;
-                        var currentwiki_1 = wiki.replace(".org", "").replace(".", "");
                         user["homeurl"] = user["rights"].filter(function (item) { return item.wiki === user["home"]; })[0]["url"];
                         user["rights"] = user["rights"].filter(function (item) {
-                            return item.wiki === currentwiki_1 &&
+                            return new URL(item.url).host === wiki &&
                                 "groups" in item &&
                                 item.groups.some(function (r) { return relevantGroups.includes(r.toLowerCase()); });
-                        });
-                        user["rights"] = user["rights"].filter(function (items) {
-                            return "groups" in items &&
-                                items.groups.some(function (r) { return relevantGroups.includes(r.toLowerCase()); });
                         });
                         user["globalGroups"] = user["globalGroups"].filter(function (item) {
                             return relevantGlobalGroups.includes(item);
@@ -252,7 +252,7 @@ var WikiRepository = {
                         });
                         if (Array.isArray(user.rights[0]))
                             user["rights"] = user["rights"][0];
-                        user["rights"] = __spread(user["rights"], user["globalGroups"]).join(", ");
+                        user["rights"] = __spreadArray(__spreadArray([], __read(user["rights"]), false), __read(user["globalGroups"]), false).join(", ");
                         return user;
                     }
                 })

@@ -68,8 +68,6 @@ var collectAllData = function () { return __awaiter(_this, void 0, void 0, funct
     });
 }); };
 var clearAllData = function () {
-    var table = document.getElementById("results-table").querySelector("tbody");
-    table.innerHTML = "";
     var table = document.getElementById("summary-table").querySelector("tbody");
     table.innerHTML = "";
     var counter = document.querySelectorAll("#data h2 span#total")[0];
@@ -107,7 +105,7 @@ var updateSummary = function () {
         var label = _a.label, count = _a.count;
         var row = document.createElement("tr");
         var percent = ((count * 100) / totalUsers).toFixed(2);
-        row.innerHTML = "<td>" + label + "</td><td class=\"percent\">" + percent + "</td>";
+        row.innerHTML = "<td>".concat(label, "</td><td class=\"percent\">").concat(percent, "</td>");
         table.append(row);
     });
 };
@@ -125,7 +123,7 @@ var addRowToTable = function (item) {
     var row = document.createElement("tr");
     var duration = new Date(item.registration).getFullYear();
     var rowHTML = "";
-    rowHTML += "<td><a href=\"" + item.homeurl + "/wiki/User:" + item.username + "\">" + item.username + "</a></td>";
+    rowHTML += "<td><a href=\"".concat(item.homeurl, "/wiki/User:").concat(item.username, "\">").concat(item.username, "</a></td>");
     rowHTML += "<td>" + item.home + "</td>";
     rowHTML += "<td>" + duration + "</td>";
     rowHTML += "<td>" + (item.rights.length > 0 ? item.rights : "") + "</td>";
@@ -200,7 +198,7 @@ var attachAutoComplete = function (inputContainer, resultContainerID, data) {
             result.innerHTML = "No Results";
             document
                 .querySelector(inputContainer)
-                .parentElement.querySelector("#" + resultContainerID)
+                .parentElement.querySelector("#".concat(resultContainerID))
                 .appendChild(result);
         },
         onSelection: function (item) {

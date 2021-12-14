@@ -21,7 +21,7 @@ yarn build
 ```
 ## Configure
 Database configuration such as server port or user credentials should be set in `app/setting.js`
-In order to do so, copy `app/settings-sample.js` into a new file `app/settings.php` and make sure that it is not tracked but git, as it contains server information.
+In order to do so, copy `app/settings-sample.js` into a new file `app/settings.js` and make sure that it is not tracked but git, as it contains server information.
 
 While doing development on your computer (localhost), you will need to adjust the database settings and open a set up a distant connection to Wikimedia replicas. Please [check here for detailed steps](https://wikitech.wikimedia.org/wiki/Help:Toolforge/Database#Connecting_to_the_database_replicas_from_your_own_computer) about connecting to the database replicas from your own computer.
 

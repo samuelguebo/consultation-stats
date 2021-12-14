@@ -27,8 +27,6 @@ const collectAllData = async () => {
  * Remove all rows from table
  */
 const clearAllData = () => {
-  let table = document.getElementById("results-table").querySelector("tbody");
-  table.innerHTML = "";
   let table = document.getElementById("summary-table").querySelector("tbody");
   table.innerHTML = "";
   let counter = document.querySelectorAll("#data h2 span#total")[0];
