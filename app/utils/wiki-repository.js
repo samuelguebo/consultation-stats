@@ -177,8 +177,8 @@ const WikiRepository = {
           user["registration"] = data.query.globaluserinfo.registration;
           user["rights"] = data.query.globaluserinfo.merged;
           user["home"] = user["rights"].reduce(
-            (acc, cur) => acc.editcount < cur.editcount ? cur : acc,
-            {editcount: 0}
+            (acc, cur) => (acc.editcount < cur.editcount ? cur : acc),
+            { editcount: 0 }
           ).wiki;
           user["globalGroups"] = data.query.globaluserinfo.groups;
           user["editcount"] = data.query.globaluserinfo.editcount;
@@ -191,7 +191,7 @@ const WikiRepository = {
           // Pick only current wiki rights that are in relevant user groups
           user["rights"] = user["rights"].filter(
             (item) =>
-            new URL(item.url).host === wiki &&
+              new URL(item.url).host === wiki &&
               "groups" in item &&
               item.groups.some((r) => relevantGroups.includes(r.toLowerCase()))
           );
