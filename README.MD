@@ -29,7 +29,7 @@ While doing development on your computer (localhost), you will need to adjust th
 
 ``` bash
 # in development environment
-node start
+yarn start
 
 # in production
 webservice start
