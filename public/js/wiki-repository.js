@@ -97,7 +97,7 @@ var WikiRepository = {
     getUsers: function (limit, data) {
         if (limit === void 0) { limit = 500; }
         return __awaiter(_this, void 0, void 0, function () {
-            var query_url, users, wiki, page, userNumberLimit, res, results, title, results_1, results_1_1, user, e_1;
+            var query_url, users, wiki, page, userNumberLimit, res, results, title_1, userDetailsBatch, results_1, results_1_1, user, batchSize, i, batch, e_1;
             var e_2, _a;
             var _this = this;
             return __generator(this, function (_b) {
@@ -106,9 +106,9 @@ var WikiRepository = {
                         query_url = "";
                         wiki = document.querySelector("input[name=wiki]").value;
                         page = document.querySelector("input[name=page]").value;
-                        userNumberLimit = 1000;
+                        userNumberLimit = 2500;
                         page = encodeURIComponent(page);
-                        if (!(wiki !== "" && page !== "")) return [3, 7];
+                        if (!(wiki !== "" && page !== "")) return [3, 13];
                         if (typeof data !== "undefined" &&
                             typeof data.continue.rvcontinue !== "undefined") {
                             query_url = "https://".concat(wiki, "/w/api.php?action=query&prop=revisions");
@@ -124,7 +124,7 @@ var WikiRepository = {
                         }
                         _b.label = 1;
                     case 1:
-                        _b.trys.push([1, 6, , 7]);
+                        _b.trys.push([1, 12, , 13]);
                         return [4, fetch(query_url)];
                     case 2:
                         res = _b.sent();
@@ -132,11 +132,12 @@ var WikiRepository = {
                     case 3:
                         data = _b.sent();
                         results = data.query.pages[0].revisions;
-                        title = data.query.pages[0].title;
+                        title_1 = data.query.pages[0].title;
                         if (typeof users === "undefined" || usernames === "undefined") {
                             users = [];
                             usernames = [];
                         }
+                        userDetailsBatch = [];
                         try {
                             for (results_1 = __values(results), results_1_1 = results_1.next(); !results_1_1.done; results_1_1 = results_1.next()) {
                                 user = results_1_1.value;
@@ -144,35 +145,11 @@ var WikiRepository = {
                                     timestamp: user["timestamp"],
                                     username: user["user"],
                                     revid: user["revid"],
-                                    page: title,
+                                    page: title_1,
                                 };
-                                if (usernames.indexOf(user.username) < 0) {
+                                if (!usernames.includes(user.username)) {
                                     usernames.push(user.username);
-                                    WikiRepository.getUserDetails(user)
-                                        .then(function (user) { return __awaiter(_this, void 0, void 0, function () {
-                                        var _a, _b;
-                                        return __generator(this, function (_c) {
-                                            switch (_c.label) {
-                                                case 0:
-                                                    if (!(typeof user !== "undefined" && user !== null)) return [3, 2];
-                                                    _a = user;
-                                                    _b = "recentedits";
-                                                    return [4, WikiRepository.getRecentEdits(user.username, user.homeurl)];
-                                                case 1:
-                                                    _a[_b] = _c.sent();
-                                                    if (list.usernames.indexOf(user.username) < 0) {
-                                                        updateUI(user);
-                                                        list.usernames.push(user.username);
-                                                        list.homewikis.push(user.home);
-                                                        Stats.displayChart(list.homewikis);
-                                                        updateSummary();
-                                                    }
-                                                    _c.label = 2;
-                                                case 2: return [2];
-                                            }
-                                        });
-                                    }); })
-                                        .catch(function (e) { });
+                                    userDetailsBatch.push(user.username);
                                 }
                             }
                         }
@@ -183,17 +160,69 @@ var WikiRepository = {
                             }
                             finally { if (e_2) throw e_2.error; }
                         }
-                        if (!(!data.hasOwnProperty("batchcomplete") &&
-                            list.usernames.length <= userNumberLimit)) return [3, 5];
-                        return [4, WikiRepository.getUsers(limit, data)];
+                        if (!(userDetailsBatch.length > 0)) return [3, 9];
+                        batchSize = 100;
+                        i = 0;
+                        _b.label = 4;
                     case 4:
+                        if (!(i < userDetailsBatch.length)) return [3, 7];
+                        batch = userDetailsBatch.slice(i, i + batchSize);
+                        return [4, Promise.all(batch.map(function (username) { return __awaiter(_this, void 0, void 0, function () {
+                                var user, _a, _b, e_3;
+                                return __generator(this, function (_c) {
+                                    switch (_c.label) {
+                                        case 0:
+                                            _c.trys.push([0, 4, , 5]);
+                                            return [4, WikiRepository.getUserDetails({
+                                                    username: username,
+                                                    page: title_1,
+                                                })];
+                                        case 1:
+                                            user = _c.sent();
+                                            if (!user) return [3, 3];
+                                            _a = user;
+                                            _b = "recentedits";
+                                            return [4, WikiRepository.getRecentEdits(user.username, user.homeurl)];
+                                        case 2:
+                                            _a[_b] = _c.sent();
+                                            updateUI(user);
+                                            list.usernames.push(user.username);
+                                            list.homewikis.push(user.home);
+                                            Stats.displayChart(list.homewikis);
+                                            updateSummary();
+                                            _c.label = 3;
+                                        case 3: return [3, 5];
+                                        case 4:
+                                            e_3 = _c.sent();
+                                            console.error("Error fetching user details:", e_3);
+                                            return [3, 5];
+                                        case 5: return [2];
+                                    }
+                                });
+                            }); }))];
+                    case 5:
                         _b.sent();
-                        _b.label = 5;
-                    case 5: return [2, list.usernames];
+                        _b.label = 6;
                     case 6:
+                        i += batchSize;
+                        return [3, 4];
+                    case 7: return [4, new Promise(function (resolve) { return setTimeout(resolve, 500); })];
+                    case 8:
+                        _b.sent();
+                        _b.label = 9;
+                    case 9:
+                        if (!(!data.hasOwnProperty("batchcomplete") &&
+                            list.usernames.length <= userNumberLimit)) return [3, 11];
+                        return [4, WikiRepository.getUsers(limit, data)];
+                    case 10:
+                        _b.sent();
+                        _b.label = 11;
+                    case 11: return [2, list.usernames];
+                    case 12:
                         e_1 = _b.sent();
-                        return [3, 7];
-                    case 7: return [2, []];
+                        console.error(e_1);
+                        return [3, 13];
+                    case 13: return [2, []];
                 }
             });
         });
