@@ -18,6 +18,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "./app/utils/*"
+    "./src/*.js"
   ]
 }
