@@ -42,7 +42,7 @@ const WikiRepository = {
     let users;
     let wiki = document.querySelector("input[name=wiki]").value;
     let page = document.querySelector("input[name=page]").value;
-    const userNumberLimit = 1000; // Arbitrary limit for saving resources
+    const userNumberLimit = 2500; // Arbitrary limit for saving resources
 
     page = encodeURIComponent(page);
     if (wiki !== "" && page !== "") {
@@ -78,6 +78,7 @@ const WikiRepository = {
         }
 
         // Loop through users and populate UI
+        let userDetailsBatch = []; // Array to hold usernames for batching
         for (let user of results) {
           user = {
             timestamp: user["timestamp"],
@@ -86,22 +87,34 @@ const WikiRepository = {
             page: title,
           };
 
-          // Avoid dupicates by keeping track of table list
-          if (usernames.indexOf(user.username) < 0) {
+          // Avoid duplicates by keeping track of table list
+          if (!usernames.includes(user.username)) {
             usernames.push(user.username);
+            userDetailsBatch.push(user.username); // Add to batch
+          }
+        }
 
-            // Collect additional details about contributor
-            WikiRepository.getUserDetails(user)
-              .then(async (user) => {
-                if (typeof user !== "undefined" && user !== null) {
-                  // Add recent edits
-                  user["recentedits"] = await WikiRepository.getRecentEdits(
-                    user.username,
-                    user.homeurl
-                  );
+        // Batch fetch user details
 
-                  // Discard duplicates
-                  if (list.usernames.indexOf(user.username) < 0) {
+        if (userDetailsBatch.length > 0) {
+          const batchSize = 100; // Batch size for fetching user details
+          for (let i = 0; i < userDetailsBatch.length; i += batchSize) {
+            const batch = userDetailsBatch.slice(i, i + batchSize);
+
+            await Promise.all(
+              batch.map(async (username) => {
+                try {
+                  const user = await WikiRepository.getUserDetails({
+                    username,
+                    page: title,
+                  });
+                  if (user) {
+                    // Add recent edits
+                    user["recentedits"] = await WikiRepository.getRecentEdits(
+                      user.username,
+                      user.homeurl
+                    );
+
                     updateUI(user);
                     list.usernames.push(user.username);
                     list.homewikis.push(user.home);
@@ -110,10 +123,15 @@ const WikiRepository = {
                     Stats.displayChart(list.homewikis);
                     updateSummary();
                   }
+                } catch (e) {
+                  console.error("Error fetching user details:", e);
                 }
               })
-              .catch((e) => {});
+            );
           }
+
+          // Delay between batches
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
 
         // limit number of results to process, for saving resources
@@ -121,13 +139,13 @@ const WikiRepository = {
           !data.hasOwnProperty("batchcomplete") &&
           list.usernames.length <= userNumberLimit
         ) {
-          // continue to process batch otherwise return users
+          // Continue to process batch
           await WikiRepository.getUsers(limit, data);
         }
 
         return list.usernames;
       } catch (e) {
-        // fails silently
+        console.error(e);
       }
     }
 
